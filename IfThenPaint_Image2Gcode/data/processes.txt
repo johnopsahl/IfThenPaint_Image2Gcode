@@ -1,0 +1,25 @@
+[
+    {
+        "color_match_threshold":0.4,
+        "image_height_std":1024,
+        "image_width_std":768,
+        "line_length_min_select":0,
+        "name":"line_scan_green",
+        "pixel_grid_side_length":64,
+        "pixel_per_mm":6.4,
+        "profile_length":3,
+        "profile_length_overlap_select":0,
+        "profile_width":3,
+        "profile_width_overlap_select":0.001,
+        "scan_angle_end":180,
+        "scan_angle_increment":90,
+        "scan_angle_start":0,
+        "scan_color_bgr":[
+            23,
+            41,
+            35
+        ],
+        "scan_line_increment_overlap":0.1,
+        "scan_line_offset_overlap":0
+    }
+]

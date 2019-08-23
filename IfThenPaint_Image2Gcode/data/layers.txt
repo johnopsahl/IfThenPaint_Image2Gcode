@@ -1,0 +1,8 @@
+[
+    {
+        "name":"green_layer",
+        "paint_name":"black",
+        "process_name":"line_scan_green",
+        "tool_profile_name":"3_round_B0C0"
+    }
+]
