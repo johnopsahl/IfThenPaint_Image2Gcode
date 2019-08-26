@@ -72,6 +72,7 @@ machine_objects = [canvas,
                    brush_water,
                    towel,
                    paint_palette,
+                   tool_change,
                    paint_water,
                    paint_dispenser]
 

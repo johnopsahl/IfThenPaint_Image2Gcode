@@ -1,0 +1,9 @@
+[
+    {
+        "paint_name":"black",
+        "tool_profile_name":"3_round_B0C0",
+        "x_position":95.0,
+        "y_end":180,
+        "y_start":200
+    }
+]

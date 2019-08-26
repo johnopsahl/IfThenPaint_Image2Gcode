@@ -197,8 +197,8 @@ def palette_paint_dip(number_of_dips,
     paint_name = paint['name']
     tool_profile_name = tool_profile['name']
     for i in range(len(brush_palette_paint_map)):
-        if (brush_palette_paint_map['paint_name'] == paint_name and 
-            brush_palette_paint_map['tool_profile_name'] == tool_profile_name):
+        if (brush_palette_paint_map[i]['paint_name'] == paint_name and 
+            brush_palette_paint_map[i]['tool_profile_name'] == tool_profile_name):
             paint_bead_index = i
             break
         
@@ -224,7 +224,7 @@ def palette_paint_dip(number_of_dips,
     
     # check if enough paint bead length for next paint dip, delete if not
     if ((y_start - y_end) - paint_bead_length) >= paint_bead_length:
-        paint_bead['y_start'] -= paint_bead_length
+        brush_palette_paint_map[paint_bead_index]['y_start'] -= paint_bead_length
     else:
         del brush_palette_paint_map[paint_bead_index]
 

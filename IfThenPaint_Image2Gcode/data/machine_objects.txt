@@ -42,6 +42,15 @@
         "z_top":2
     },
     {
+        "a_start":90,
+        "c_screw":1190.59,
+        "c_start":0,
+        "name":"tool_change",
+        "z_clearance":15,
+        "z_dock":-11.5,
+        "z_screw":2.5
+    },
+    {
         "name":"paint_water",
         "x_center":164,
         "y_center":-45.25,

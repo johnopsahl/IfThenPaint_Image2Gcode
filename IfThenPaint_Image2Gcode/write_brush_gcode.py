@@ -73,7 +73,7 @@ def write_brush_gcode(project_name,
     gcode_file.write('\n')
     
     gcode_file.write('(TOOL CHANGE)\n')
-    for key in towel:
+    for key in tool_change:
         gcode_file.write('(' + str(key) + ' , ' + str(tool_change[key]) + ')\n')
     gcode_file.write('\n')
     
@@ -165,14 +165,14 @@ def get_tool(tool, tool_change, gcode_file):
     # get the specified tool from it's tool dock
     
     # raise Z to clearnce height
-    gcode_file.write('G00 Z%.4f\n', tool_change['z_clearance'])
+    gcode_file.write('G00 Z%.4f\n'% tool_change['z_clearance'])
     # to go tool dock
-    gcode_file.write('G00 X%.4f Y%.4ff\n' % (tool['x_dock'], tool['y_dock']))
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # orient A and C axes
     gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'],
                                             tool_change['c_start']))
     # plunge into dock
-    gcode_file.write('G00 Z%.4f\n' % tool_change['z_dock'] + tool_change['z_screw'])
+    gcode_file.write('G00 Z%.4f\n' % (tool_change['z_dock'] + tool_change['z_screw']))
     # screw into tool chuck, past overtorque of stepper motor
     gcode_file.write('G00 Z%.4f C%.4f\n' % (tool_change['z_dock'], -tool_change['c_screw']))
     # soft set C axis to zero
@@ -184,7 +184,7 @@ def dock_tool(tool, tool_change, gcode_file):
     # return the tool to it's tool dock
     
     # raise Z to clearnce height
-    gcode_file.write('G00 Z%.4f\n', tool_change['z_clearance'])
+    gcode_file.write('G00 Z%.4f\n'% tool_change['z_clearance'])
     # go to tool dock
     gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # orient A and C axes
