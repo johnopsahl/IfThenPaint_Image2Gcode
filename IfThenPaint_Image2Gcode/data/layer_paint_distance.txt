@@ -1,7 +1,0 @@
-[
-    {
-        "paint_distance":1930.5032812499999,
-        "paint_name":"black",
-        "tool_profile_name":"3_round_B0C0"
-    }
-]

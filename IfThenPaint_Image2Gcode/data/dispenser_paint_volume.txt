@@ -1,6 +1,0 @@
-[
-    {
-        "paint_name":"black",
-        "paint_volume":0.16000000000000003
-    }
-]
