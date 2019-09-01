@@ -147,6 +147,7 @@ def write_brush_gcode(project_name,
         brush_palette_paint_map,
         towel = ln2gcd.stroke_lines_to_paint_gcode(stroke_line,
                                                    tool_profile,
+                                                   tool,
                                                    paint,
                                                    brush_palette_paint_map,
                                                    brush_water,
@@ -162,15 +163,15 @@ def write_brush_gcode(project_name,
     gcode_file.close()
 
 def get_tool(tool, tool_change, gcode_file):
-    # get the specified tool from it's tool dock
+    # get the tool from it's dock
     
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n'% tool_change['z_clearance'])
-    # to go tool dock
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # orient A and C axes
     gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'],
                                             tool_change['c_start']))
+    # to go tool dock
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # plunge into dock
     gcode_file.write('G00 Z%.4f\n' % (tool_change['z_dock'] + tool_change['z_screw']))
     # screw into tool chuck, past overtorque of stepper motor
@@ -181,15 +182,15 @@ def get_tool(tool, tool_change, gcode_file):
     gcode_file.write('G00 Z%.4f\n' % tool_change['z_clearance'])
     
 def dock_tool(tool, tool_change, gcode_file):
-    # return the tool to it's tool dock
+    # return the tool to it's dock
     
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n'% tool_change['z_clearance'])
-    # go to tool dock
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # orient A and C axes
     gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'], 
                                             tool_change['c_start']))
+    # go to tool dock
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # plunge into dock
     gcode_file.write('G00 Z%.4f\n' % tool_change['z_dock'])
     # screw into tool chuck, past overtorque of stepper motor
