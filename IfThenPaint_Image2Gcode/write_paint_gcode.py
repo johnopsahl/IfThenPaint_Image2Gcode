@@ -60,9 +60,15 @@ def write_paint_gcode(project_name,
         gcode_file.write('(' + str(key) + ' , ' + str(paint_water[key]) + ')\n')
     gcode_file.write('\n')
     
+    gcode_file.write("G17 G21 G90 G94 G54") # initialization block
+    # G17 -> G02 and G03 commands about the XY plane
+    # G21 -> units of millimeters
+    # G90 -> absolute coordinates
+    # 694 -> feed rate in distance/minute units
+    # G54 -> workspace coordinates
+        
     remove_from_water(paint_water, gcode_file)
-    go_to_prehome(paint_management, gcode_file)
-    go_to_home(gcode_file)
+    go_to_home(paint_management, gcode_file)
     
     for paint_row in paint_palette_map:          
         
@@ -104,7 +110,7 @@ def get_dispenser(dispenser_position, dispenser, palette, gcode_file):
     gcode_file.write('G00 A%.4f\n' % dispenser_angle)
     
 def dispense_paint(x_position, y_start, y_end, 
-                   dispenser, palette, 
+                   dispenser, paint_management, palette, 
                    gcode_file):
     # dispense paint on the palette
     
@@ -119,7 +125,7 @@ def dispense_paint(x_position, y_start, y_end,
     gcode_file.write('G00 Z%.4f\n' % (dispenser['paint_bead_height'] + 
                                       palette['z_top']))
     # probe for syringe plunger level, stop when probe switch is activated
-    gcode_file.write('G38.3 B%.4f\n' % dispenser['b_axis_max'])
+    gcode_file.write('G38.3 B%.4f\n' % paint_management['b_max_travel'])
     
     # change to relative coordinates to dispense paint
     gcode_file.write('G91')
@@ -155,17 +161,14 @@ def return_to_water(paint_water, gcode_file):
     # lower dispensers into water
     gcode_file.write('G00 Z%.4f\n' % paint_water['z_water'])
     
-def go_to_prehome(paint_management, gcode_file):
-    # go to position near positive y end so syringe carousel has enough
-    # clearance to perform z home operation
-    # assumes syringe carousel is in water at start
-    
-    gcode_file.write('G00 Y%.4f\n' % paint_management['y_home_start_offset'])
-    
-def go_to_home(gcode_file):
-    # home Z, X and Y, and B axes (in that order)vthen zero out all axes
+def go_to_home(paint_management, gcode_file):
+    # home X and Y, Z, and B axes (in that order) then set work coordinates
 
     gcode_file.write('$H') # grbl specific homing command
+    # set work coordinates
+    gcode_file.write('G92 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,
+                                                              paint_management['y_max_travel'],
+                                                              0,0,0))
     
 def palette_to_workspace(paint_management, gcode_file):
     # move palette to workspace

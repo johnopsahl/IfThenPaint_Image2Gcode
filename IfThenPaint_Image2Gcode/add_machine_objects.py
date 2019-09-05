@@ -33,27 +33,28 @@ towel = {'name': 'towel',
 
 tool_change = {'name': 'tool_change',
                'z_clearance': 15, # relative to end of tool
-               'z_dock': -366,
+               'z_dock': -180,
                'a_start': 90,
                'c_start': 0,
                'z_screw': 2.5,
                'c_screw': 1190.59}
 
 paint_management = {'name': 'paint_management',
-                    'y_home_start_offset': 250, # go to position prior to homing
-                    'x_workspace': -6} #x distance to position palette within workspace
+                    'y_max_travel': 336,
+                    'b_max_travel': 98,
+                    'x_workspace': 7} #x distance to position palette within workspace
 
 paint_palette = {'name': 'paint_palette',
-                 'x_min': 363,
-                 'x_max': 263,
-                 'y_min': 123,
-                 'y_max': 323,
-                 'z_top': -7} 
+                 'x_min': 280,
+                 'x_max': 380,
+                 'y_min': 233,
+                 'y_max': 333,
+                 'z_top': 21} 
 
 paint_water = {'name': 'paint_water',
-               'y_water': 21,
-               'z_water': -15.5,
-               'z_clearance': -5}
+               'y_water': 36,
+               'z_water': 2,
+               'z_clearance': 15}
 
 paint_dispenser = {'name': 'paint_dispenser',
                    'angle_btw_dispensers': 36,
@@ -61,9 +62,8 @@ paint_dispenser = {'name': 'paint_dispenser',
                    'paint_bead_height': 2,
                    'x_bead_offset': 10,
                    'z_clearance': 8, # relative to top of paint palette
-                   'b_clearance': 4, # relative to top of paint palette
+                   'b_clearance': 4, 
                    'b_initial_dispense': 0.75,
-                   'b_axis_max': 52,
                    'b_dispense_rate': 10/6}
 
 machine_objects = [canvas,

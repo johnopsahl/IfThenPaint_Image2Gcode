@@ -77,6 +77,13 @@ def write_brush_gcode(project_name,
         gcode_file.write('(' + str(key) + ' , ' + str(tool_change[key]) + ')\n')
     gcode_file.write('\n')
     
+    gcode_file.write("G17 G21 G90 G94 G54") # initialization block
+    # G17 -> G02 and G03 commands about the XY plane
+    # G21 -> units of millimeters
+    # G90 -> absolute coordinates
+    # 694 -> feed rate in distance/minute units
+    # G54 -> workspace coordinates
+    
     tool_current = None 
     
     for layer in layers:          
