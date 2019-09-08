@@ -17,7 +17,6 @@ def write_paint_gcode(project_name,
     gcode_file = open(os.path.join(DATA_PATH, str(project_name) + '_paint' + '.gcode'), 'w')
     
     gcode_file.write('%\n') # start of gcode file
-    gcode_file.write('\n')
     gcode_file.write('(PROJECT, ' + str(project_name) + ')\n')
     gcode_file.write('(TIMESTAMP, ' + timestamp + ')\n')
     gcode_file.write('\n')
@@ -33,7 +32,7 @@ def write_paint_gcode(project_name,
     paint_water = machine_objects[paint_water_index]
     
     # write paint volumes required to gcode file
-    gcode_file.write('(PAINT VOLUME (CM^3) REQUIRED)\n')
+    gcode_file.write('(PAINT VOLUME CM^3 REQUIRED)\n')
     for paint_volume in dispenser_paint_volume:
         for key in paint_volume:
             gcode_file.write('(' + str(key) + ' , ' + str(paint_volume[key]) + ')\n')
@@ -60,7 +59,7 @@ def write_paint_gcode(project_name,
         gcode_file.write('(' + str(key) + ' , ' + str(paint_water[key]) + ')\n')
     gcode_file.write('\n')
     
-    gcode_file.write("G17 G21 G90 G94 G54") # initialization block
+    gcode_file.write('G17 G21 G90 G94 G54\n') # initialization block
     # G17 -> G02 and G03 commands about the XY plane
     # G21 -> units of millimeters
     # G90 -> absolute coordinates
@@ -87,6 +86,7 @@ def write_paint_gcode(project_name,
                        paint_row['y_start'],
                        paint_row['y_end'],
                        paint_dispenser,
+                       paint_management,
                        paint_palette,
                        gcode_file)
         
@@ -125,16 +125,19 @@ def dispense_paint(x_position, y_start, y_end,
     gcode_file.write('G00 Z%.4f\n' % (dispenser['paint_bead_height'] + 
                                       palette['z_top']))
     # probe for syringe plunger level, stop when probe switch is activated
-    gcode_file.write('G38.3 B%.4f\n' % paint_management['b_max_travel'])
+    gcode_file.write('G38.3 B%.4f F%.4f\n' % (paint_management['b_max_travel'],
+                                              dispenser['b_feedrate']))
     
     # change to relative coordinates to dispense paint
-    gcode_file.write('G91')
+    gcode_file.write('G91\n')
     # dispense a small amount of paint (to reduce viscosity of thixotropic paint
     gcode_file.write('G01 B%.4f\n' % dispenser['b_initial_dispense'])
     # dispense bead of paint
     gcode_file.write('G01 Y%.4f B%.4f\n' % (y_start - y_end, syringe_dispense))
+    # raise push plate limit off of syringe plunger so it is no longer activated
+    gcode_file.write('G00 B%.4f\n' % -dispenser['b_probe_retract'])
     # return to absolute coordinates
-    gcode_file.write('G90')
+    gcode_file.write('G90\n')
     
     # raise to palette clearance height
     gcode_file.write('G00 Z%.4f\n' % (dispenser['z_clearance']+
@@ -164,7 +167,7 @@ def return_to_water(paint_water, gcode_file):
 def go_to_home(paint_management, gcode_file):
     # home X and Y, Z, and B axes (in that order) then set work coordinates
 
-    gcode_file.write('$H') # grbl specific homing command
+    gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
     gcode_file.write('G92 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,
                                                               paint_management['y_max_travel'],
@@ -193,7 +196,7 @@ if __name__ == '__main__':
         paints = json.load(f)
     f.close()
     
-    write_paint_gcode('hill_side',
+    write_paint_gcode('jackie',
                       paint_palette_map,
                       dispenser_paint_volume,
                       machine_objects,

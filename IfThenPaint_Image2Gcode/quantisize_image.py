@@ -26,7 +26,7 @@ def color_quantisize_image(image, color_count):
     
 if __name__ == '__main__':
     
-    COLOR_COUNT = 5
+    COLOR_COUNT = 4
     
     image = cv2.imread(os.path.join(DATA_PATH, 'image_sized.png'))
     

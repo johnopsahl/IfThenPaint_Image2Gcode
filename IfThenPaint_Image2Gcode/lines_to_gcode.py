@@ -52,7 +52,7 @@ def stroke_lines_to_paint_gcode(line,
 
             if clean_dist <= 0: # when paint brush drys out, wet and dry brush, dip in paint
                 water_dip(3, water, tool, tool_profile, gcode_file)
-                towel = towel_wipe(3, towel, tool, tool_profile, gcode_file)
+                towel = towel_wipe(2, towel, tool, tool_profile, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
                 brush_palette_paint_map = palette_paint_dip(2, 
                                                             brush_palette_paint_map,
@@ -161,29 +161,26 @@ def water_dip(number_of_swirls, water, tool, tool_profile, gcode_file):
 def towel_wipe(number_of_wipes, towel, tool, tool_profile, gcode_file):
     # wipe brush on towel in a ccw motion, the towel is a consumable object
     
-    # go to towel
-    gcode_file.write('G00 X%.4f Y%.4f\n' 
-                     % (towel['x_current'] + towel['wipe_radius'], 
-                        towel['y_center'] + towel['wipe_radius']))
-    # lower tool to towel
-    gcode_file.write('G00 Z%.4f\n' % tool['z_towel_wipe'])
     # wipe brush on towel in a ccw motion
     for j in range(number_of_wipes):
+        
+        # go to towel
+        gcode_file.write('G00 X%.4f Y%.4f\n' 
+                         % (towel['x_current'], 
+                            towel['y_center']))
+        # lower tool to towel
+        gcode_file.write('G00 Z%.4f\n' % tool['z_towel_wipe'])
+        
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
-                         % (towel['x_current'] - towel['wipe_radius'], 
-                            towel['y_center'] + towel['wipe_radius'], 
+                         % (towel['x_current'], 
+                            towel['y_center'], 
                             -towel['wipe_radius'], 
                             0, 
                             towel['feed_rate']))
-        
-        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
-                         % (towel['x_current'] + towel['wipe_radius'], 
-                            towel['y_center'] + towel['wipe_radius'], 
-                            towel['wipe_radius'], 
-                            0, 
-                            towel['feed_rate']))
-        # increment towel y position so a different part of the towel is used next
-        towel['x_current'] += towel['x_increment']
+
+        # increment towel x position so a different part of the towel is used next
+        towel['x_current'] -= towel['x_increment']
+
     # raise tool to retract height
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_retract'])
     

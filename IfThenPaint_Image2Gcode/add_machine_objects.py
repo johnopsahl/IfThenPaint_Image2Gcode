@@ -64,13 +64,16 @@ paint_dispenser = {'name': 'paint_dispenser',
                    'z_clearance': 8, # relative to top of paint palette
                    'b_clearance': 4, 
                    'b_initial_dispense': 0.75,
-                   'b_dispense_rate': 10/6}
+                   'b_dispense_rate': 2/40,
+                   'b_probe_retract': 2,
+                   'b_feedrate': 250}
 
 machine_objects = [canvas,
                    brush_palette,
                    brush_water,
                    towel,
                    paint_palette,
+                   paint_management,
                    tool_change,
                    paint_water,
                    paint_dispenser]

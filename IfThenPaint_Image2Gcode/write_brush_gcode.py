@@ -22,7 +22,6 @@ def write_brush_gcode(project_name,
     gcode_file = open(os.path.join(DATA_PATH, str(project_name) + '_brush' + '.gcode'), 'w')
     
     gcode_file.write('%\n') # start of gcode file
-    gcode_file.write('\n')
     gcode_file.write('(PROJECT, ' + str(project_name) + ')\n')
     gcode_file.write('(TIMESTAMP, ' + timestamp + ')\n')
     gcode_file.write('\n')
@@ -77,12 +76,14 @@ def write_brush_gcode(project_name,
         gcode_file.write('(' + str(key) + ' , ' + str(tool_change[key]) + ')\n')
     gcode_file.write('\n')
     
-    gcode_file.write("G17 G21 G90 G94 G54") # initialization block
+    gcode_file.write('G17 G21 G90 G94 G54\n') # initialization block
     # G17 -> G02 and G03 commands about the XY plane
     # G21 -> units of millimeters
     # G90 -> absolute coordinates
     # 694 -> feed rate in distance/minute units
     # G54 -> workspace coordinates
+    go_to_home(gcode_file)
+    gcode_file.write('\n')
     
     tool_current = None 
     
@@ -169,6 +170,13 @@ def write_brush_gcode(project_name,
     gcode_file.write('%') # end of gcode file
     gcode_file.close()
 
+def go_to_home(gcode_file):
+    # home X and Y, Z (in that order) then set work coordinates
+
+    gcode_file.write('$H\n') # grbl specific homing command
+    # set work coordinates
+    gcode_file.write('G92 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' % (0,0,0,0,0,0))
+    
 def get_tool(tool, tool_change, gcode_file):
     # get the tool from it's dock
     
@@ -240,7 +248,7 @@ if __name__ == '__main__':
         palette_paint_map = json.load(f)
     f.close()
     
-    write_brush_gcode('hill_side',
+    write_brush_gcode('jackie',
                       machine_objects,
                       paints,
                       tools,

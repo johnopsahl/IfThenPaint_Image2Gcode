@@ -16,10 +16,10 @@ from definitions import DATA_PATH
 
 # the parameters used by the line scan function to generate paint strokes from
 # a digital image by paint color
-scan_1 = {'name': 'line_scan_gray',
-          'scan_color_bgr': [166, 150, 132],
+scan_1 = {'name': 'line_scan_black',
+          'scan_color_bgr': [28, 42, 53],
           'scan_angle_start': 0,
-          'scan_angle_increment': 90,
+          'scan_angle_increment': 30,
           'scan_angle_end': 180,
           'profile_width': 3,
           'profile_length': 3,
