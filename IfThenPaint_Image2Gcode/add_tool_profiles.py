@@ -17,7 +17,7 @@ tool_profile_1 = {'name': '7x2.5_flat_B90C0',
                   'z_canvas_paint': 1,
                   'paint_dist_max': 200,
                   'clean_dist_max': 3000,
-                  'paint_bead_length': 2,
+                  'paint_bead_length': 4,
                   'z_paint_dip': 0,
                   'feed_rate': 2500}
 
@@ -32,7 +32,7 @@ tool_profile_2 = {'name': '7x2.5_flat_B90C0',
                   'z_canvas_paint': 1,
                   'paint_dist_max': 200,
                   'clean_dist_max': 3000,
-                  'paint_bead_length': 2,
+                  'paint_bead_length': 4,
                   'z_paint_dip': 0,
                   'feed_rate': 2500}
 
@@ -47,7 +47,7 @@ tool_profile_3 = {'name': '3_round_B0C0',
                   'z_canvas_paint': 0.5,
                   'paint_dist_max': 200,
                   'clean_dist_max': 3000,
-                  'paint_bead_length': 2,
+                  'paint_bead_length': 4,
                   'z_paint_dip': 0,
                   'feed_rate': 2500}
 

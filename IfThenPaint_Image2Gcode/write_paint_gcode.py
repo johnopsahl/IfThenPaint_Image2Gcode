@@ -128,12 +128,12 @@ def dispense_paint(x_position, y_start, y_end,
     gcode_file.write('G38.3 B%.4f F%.4f\n' % (paint_management['b_max_travel'],
                                               dispenser['b_feedrate']))
     
-    # change to relative coordinates to dispense paint
+    # change to relative coordinates
     gcode_file.write('G91\n')
     # dispense a small amount of paint (to reduce viscosity of thixotropic paint
     gcode_file.write('G01 B%.4f\n' % dispenser['b_initial_dispense'])
     # dispense bead of paint
-    gcode_file.write('G01 Y%.4f B%.4f\n' % (y_start - y_end, syringe_dispense))
+    gcode_file.write('G01 Y%.4f B%.4f\n' % (y_end - y_start, syringe_dispense))
     # raise push plate limit off of syringe plunger so it is no longer activated
     gcode_file.write('G00 B%.4f\n' % -dispenser['b_probe_retract'])
     # return to absolute coordinates
@@ -146,19 +146,21 @@ def dispense_paint(x_position, y_start, y_end,
 def remove_from_water(paint_water, gcode_file):
     # remove syringe carousel from the paint water dish
     
+    # change to relative coordinates
+    gcode_file.write('G91\n')
     # raise to clearance height
     gcode_file.write('G00 Z%.4f\n' % paint_water['z_clearance'])
     # jostle dispensers to reomve any water droplets
-    gcode_file.write('G00 A%.4f\n' % 90)
+    gcode_file.write('G00 A%.4f\n' % 45)
     gcode_file.write('G00 A%.4f\n' % -90)
-    gcode_file.write('G00 A%.4f\n' % 0)
+    gcode_file.write('G00 A%.4f\n' % 45)
+    # return to absolute coordinates
+    gcode_file.write('G90\n')
     
 def return_to_water(paint_water, gcode_file):
     # return paint carousel to the paint water dish, so the tips of the
     # syringes do not dry out 
     
-    # raise to clearance height
-    gcode_file.write('G00 Z%.4f\n' % paint_water['z_clearance'])
     # go to water
     gcode_file.write('G00 Y%.4f\n' % paint_water['y_water'])
     # lower dispensers into water
@@ -167,11 +169,12 @@ def return_to_water(paint_water, gcode_file):
 def go_to_home(paint_management, gcode_file):
     # home X and Y, Z, and B axes (in that order) then set work coordinates
 
+    gcode_file.write('G04 P%.4f\n' % 3)
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
-    gcode_file.write('G92 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,
-                                                              paint_management['y_max_travel'],
-                                                              0,0,0))
+    gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,
+                                                                     paint_management['y_max_travel'],
+                                                                     0,0,0))
     
 def palette_to_workspace(paint_management, gcode_file):
     # move palette to workspace

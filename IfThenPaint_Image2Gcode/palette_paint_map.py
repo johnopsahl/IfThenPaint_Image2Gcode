@@ -28,12 +28,16 @@ def palette_paint_map(layer_paint_distance, machine_objects, paints, tool_profil
         paint_dist_max = tool_profile['paint_dist_max']
         brush_paint_bead_length = tool_profile['paint_bead_length']
         
+        palette_y_start = palette['y_max'] - palette['y_margin']
+        palette_y_end = palette['y_min'] + palette['y_margin']
+        palette_length = palette_y_start - palette_y_end
+        
         # calculate length of paint bead needed based on total length of 
         # strokes on canvas and required length of paint bead for each paint dip
         paint_bead_distance = math.ceil((layer['paint_distance']/paint_dist_max))*brush_paint_bead_length
         
          # limit max paint bead length to be a multiple of the brush paint bead length
-        paint_bead_length_max = math.floor((palette['y_max'] - palette['y_min'])/brush_paint_bead_length)*brush_paint_bead_length
+        paint_bead_length_max = math.floor(palette_length/brush_paint_bead_length)*brush_paint_bead_length
         
         # calculate paint volume to determine the minimum amount of paint to
         # load into each dispenser prior to the painting
@@ -42,21 +46,21 @@ def palette_paint_map(layer_paint_distance, machine_objects, paints, tool_profil
                                        'paint_volume': paint_volume})
         
         while paint_bead_distance > 0:
-            if x_current > palette['x_min']:
+            if x_current + 1.5*dispenser['x_bead_offset'] > palette['x_min']:
                 if paint_bead_distance >= paint_bead_length_max:
                     palette_paint_map.append({'paint_name': paint_name,
                                               'tool_profile_name': tool_profile_name,
                                               'x_position': x_current,
-                                              'y_start': palette['y_max'],
-                                              'y_end': palette['y_max'] - paint_bead_length_max})
+                                              'y_start': palette_y_start,
+                                              'y_end': palette_y_start - paint_bead_length_max})
                     x_current -= dispenser['x_bead_offset']
                     paint_bead_distance -= paint_bead_length_max
                 else:
                     palette_paint_map.append({'paint_name': paint_name,
                                               'tool_profile_name': tool_profile_name,
                                               'x_position': x_current,
-                                              'y_start': palette['y_max'],
-                                              'y_end': palette['y_max'] - paint_bead_distance})
+                                              'y_start': palette_y_start,
+                                              'y_end': palette_y_start - paint_bead_distance})
                     x_current -= dispenser['x_bead_offset']
                     paint_bead_distance = 0
             else:

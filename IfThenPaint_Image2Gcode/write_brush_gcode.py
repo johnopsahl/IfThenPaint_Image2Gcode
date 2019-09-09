@@ -175,7 +175,7 @@ def go_to_home(gcode_file):
 
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
-    gcode_file.write('G92 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' % (0,0,0,0,0,0))
+    gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' % (0,0,0,0,0,0))
     
 def get_tool(tool, tool_change, gcode_file):
     # get the tool from it's dock
