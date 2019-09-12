@@ -32,7 +32,6 @@ towel = {'name': 'towel',
          'feed_rate': 2500}
 
 tool_change = {'name': 'tool_change',
-               'z_clearance': 15, # relative to end of tool
                'z_dock': -180,
                'a_start': 90,
                'c_start': 0,

@@ -89,7 +89,10 @@ def write_paint_gcode(project_name,
                        paint_management,
                        paint_palette,
                        gcode_file)
-        
+    
+    # go to 0 position of A axis prior to returning to water
+    get_dispenser(0, paint_dispenser, paint_palette, gcode_file)
+    
     return_to_water(paint_water, gcode_file)
     palette_to_workspace(paint_management, gcode_file)
     
