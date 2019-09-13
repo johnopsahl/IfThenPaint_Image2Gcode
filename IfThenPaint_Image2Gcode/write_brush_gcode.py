@@ -188,11 +188,20 @@ def get_tool(tool, tool_change, gcode_file):
     # to go tool dock
     gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # plunge into dock
-    gcode_file.write('G00 Z%.4f\n' % (tool_change['z_dock'] + tool_change['z_screw']))
+    gcode_file.write('G00 Z%.4f\n' % tool_change['z_dock'])
+    
+    # change to relative coordinates
+    gcode_file.write('G91\n')
     # screw into tool chuck, past overtorque of stepper motor
-    gcode_file.write('G00 Z%.4f C%.4f\n' % (tool_change['z_dock'], -tool_change['c_screw']))
+    gcode_file.write('G00 Z%.4f C%.4f\n' % (-tool_change['z_screw'],
+                                            -tool_change['c_screw']))
+    # continue to rotate C axis
+    gcode_file.write('G00 C%.4f\n' % -30)
+    # change to absolute coordinates
+    gcode_file.write('G90\n')
+    
     # soft set C axis to zero
-    gcode_file.write('G10 L20 P1 A%.4f\n' % 0)
+    gcode_file.write('G10 L20 P1 C%.4f\n' % 0)
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
     
@@ -208,9 +217,17 @@ def dock_tool(tool, tool_change, gcode_file):
     gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # plunge into dock
     gcode_file.write('G00 Z%.4f\n' % tool_change['z_dock'])
+    
+    # change to relative coordinates
+    gcode_file.write('G91\n')
     # screw into tool chuck, past overtorque of stepper motor
-    gcode_file.write('G00 Z%.4f C%.4f\n' % (tool_change['z_dock'] + tool_change['z_screw'], 
+    gcode_file.write('G00 Z%.4f C%.4f\n' % (tool_change['z_screw'], 
                                             tool_change['c_screw']))
+    # continue to rotate C axis
+    gcode_file.write('G00 C%.4f\n' % 30)
+    # change to absolute coordinates
+    gcode_file.write('G90\n')
+    
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
     

@@ -143,21 +143,20 @@ def water_dip(number_of_swirls, water, tool, tool_profile, gcode_file):
     gcode_file.write('G00 Z%.4f\n' % tool['z_water_dip'])
     # dip brush in water in a ccw circle
     for i in range(number_of_swirls):
-        gcode_file.write('G03 X%.4f Y%.4f C%.4f I%.4f J%.4f F%i\n'
+        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (water['x_center'] - water['dip_radius'], 
                             water['y_center'],
-                            360,
                             -water['dip_radius'], 
                             0, 
                             water['feed_rate']))
         
-        gcode_file.write('G03 X%.4f Y%.4f C%.4f I%.4f J%.4f  F%i\n'
+        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f  F%i\n'
                          % (water['x_center'] + water['dip_radius'], 
-                            water['y_center'], 
-                            -360,
+                            water['y_center'],
                             water['dip_radius'], 
                             0,
                             water['feed_rate']))
+        
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
 
@@ -166,7 +165,7 @@ def towel_wipe(number_of_wipes, towel, tool, tool_profile, gcode_file):
     
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
-    
+           
     # wipe brush on towel in a ccw motion
     for j in range(number_of_wipes):
         

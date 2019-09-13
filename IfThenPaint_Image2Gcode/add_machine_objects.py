@@ -32,11 +32,11 @@ towel = {'name': 'towel',
          'feed_rate': 2500}
 
 tool_change = {'name': 'tool_change',
-               'z_dock': -180,
-               'a_start': 90,
+               'z_dock': -181,
+               'a_start': 0,
                'c_start': 0,
-               'z_screw': 2.5,
-               'c_screw': 1190.59}
+               'z_screw': 3.5,
+               'c_screw': 1333.5}
 
 paint_management = {'name': 'paint_management',
                     'y_max_travel': 336,
