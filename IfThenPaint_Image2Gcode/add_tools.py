@@ -15,13 +15,13 @@ tool_1 = {'name': '3_round',
           'z_water_dip': -132, 
           'z_towel_wipe': -74}
 
-tool_2 = {'name': '7x2.5_flat',
+tool_2 = {'name': '2_round',
           'tool_length' : 10,
           'x_dock': 113,
           'y_dock': 330,
-          'z_B0C0_clearance': 0,
-          'z_water_dip': -5,
-          'z_towel_wipe': -5}
+          'z_B0C0_clearance': -55,
+          'z_water_dip': -132,
+          'z_towel_wipe': -74}
 
 tool_3 = {'name': 'none_1',
           'tool_length' : 10,

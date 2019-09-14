@@ -20,7 +20,7 @@ def size_image(image, pixel_width_max, pixel_height_max):
 
 if __name__ == '__main__':
 
-    IMAGE_FILE_NAME = 'jackie.png'
+    IMAGE_FILE_NAME = 'jackie_grayscale.png'
     
     image = cv2.imread(os.path.join(DATA_PATH, IMAGE_FILE_NAME))
     

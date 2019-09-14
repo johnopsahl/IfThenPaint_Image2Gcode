@@ -20,7 +20,7 @@ brush_palette = {'name': 'brush_palette',
 brush_water = {'name': 'brush_water',
                'x_center': 244,
                'y_center': 39,
-               'dip_radius': 15,
+               'dip_radius': 17,
                'feed_rate': 2500}
 
 towel = {'name': 'towel',

@@ -143,6 +143,11 @@ def water_dip(number_of_swirls, water, tool, gcode_file):
     gcode_file.write('G00 Z%.4f\n' % tool['z_water_dip'])
     # dip brush in water in a ccw circle
     for i in range(number_of_swirls):
+        
+        gcode_file.write('G91\n')
+        gcode_file.write('G00 C%.4f\n' % 360)
+        gcode_file.write('G90\n')
+        
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (water['x_center'] - water['dip_radius'], 
                             water['y_center'],
@@ -150,12 +155,17 @@ def water_dip(number_of_swirls, water, tool, gcode_file):
                             0, 
                             water['feed_rate']))
         
+        gcode_file.write('G91\n')
+        gcode_file.write('G00 C%.4f\n' % -360)
+        gcode_file.write('G90\n')
+        
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f  F%i\n'
                          % (water['x_center'] + water['dip_radius'], 
                             water['y_center'],
                             water['dip_radius'], 
                             0,
                             water['feed_rate']))
+        
         
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
@@ -224,7 +234,7 @@ def palette_paint_dip(number_of_dips,
         # dip brush into paint
         gcode_file.write('G00 Z%.4f\n' % tool_profile['z_paint_dip'])
         # Z axis to canvas retract height
-        gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
+        gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
     
     # check if enough paint bead length for next paint dip, delete if not
     if ((y_start - y_end) - paint_bead_length) >= paint_bead_length:
