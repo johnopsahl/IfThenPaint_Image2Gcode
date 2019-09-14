@@ -52,8 +52,8 @@ def stroke_lines_to_paint_gcode(line,
         while draw_dist > 0:
 
             if clean_dist <= 0: # when paint brush drys out, wet and dry brush, dip in paint
-                water_dip(3, water, tool, tool_profile, gcode_file)
-                towel = towel_wipe(2, towel, tool, tool_profile, gcode_file)
+                water_dip(3, water, tool, gcode_file)
+                towel = towel_wipe(2, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
                 brush_palette_paint_map = palette_paint_dip(2, 
                                                             brush_palette_paint_map,
@@ -131,7 +131,7 @@ def stroke_lines_to_paint_gcode(line,
         
     return brush_palette_paint_map, towel
     
-def water_dip(number_of_swirls, water, tool, tool_profile, gcode_file):
+def water_dip(number_of_swirls, water, tool, gcode_file):
     # clean brush during painting to re-wet brush or between colors
     
     # Z axis to B0C0 clearance height    
@@ -160,7 +160,7 @@ def water_dip(number_of_swirls, water, tool, tool_profile, gcode_file):
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
 
-def towel_wipe(number_of_wipes, towel, tool, tool_profile, gcode_file):
+def towel_wipe(number_of_wipes, towel, tool, gcode_file):
     # wipe brush on towel in a ccw motion, the towel is a consumable object
     
     # Z axis to B0C0 clearance height
@@ -170,9 +170,7 @@ def towel_wipe(number_of_wipes, towel, tool, tool_profile, gcode_file):
     for j in range(number_of_wipes):
         
         # go to towel
-        gcode_file.write('G00 X%.4f Y%.4f\n' 
-                         % (towel['x_current'], 
-                            towel['y_center']))
+        gcode_file.write('G00 X%.4f Y%.4f\n' % (towel['x_current'], towel['y_center']))
         # lower tool to towel
         gcode_file.write('G00 Z%.4f\n' % tool['z_towel_wipe'])
         

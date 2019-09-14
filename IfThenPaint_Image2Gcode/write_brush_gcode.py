@@ -143,6 +143,8 @@ def write_brush_gcode(project_name,
             get_tool(tool, tool_change, gcode_file)
             tool_current = tool
         elif tool_current['name'] != tool['name']:
+            ln2gcd.water_dip(3, brush_water, tool_current, gcode_file)
+            towel = ln2gcd.towel_wipe(2, towel, tool_current, gcode_file)
             dock_tool(tool_current, gcode_file)
             get_tool(tool, tool_change, gcode_file)
             tool_current = tool
@@ -152,7 +154,7 @@ def write_brush_gcode(project_name,
         # translate line points to canvas origin in workspace
         stroke_line += np.asarray([canvas['x_left'], canvas['y_bottom']])
         
-        brush_palette_paint_map,
+        brush_palette_paint_map, \
         towel = ln2gcd.stroke_lines_to_paint_gcode(stroke_line,
                                                    tool_profile,
                                                    tool,
@@ -163,7 +165,11 @@ def write_brush_gcode(project_name,
                                                    gcode_file)
         
         gcode_file.write('\n')
-
+    
+    # clean tool prior to docking
+    ln2gcd.water_dip(3, brush_water, tool, gcode_file)
+    towel = ln2gcd.towel_wipe(2, towel, tool, gcode_file)
+    
     # dock tool once painting is complete
     dock_tool(tool_current, tool_change, gcode_file)
     
@@ -196,7 +202,7 @@ def get_tool(tool, tool_change, gcode_file):
     gcode_file.write('G00 Z%.4f C%.4f\n' % (-tool_change['z_screw'],
                                             -tool_change['c_screw']))
     # continue to rotate C axis
-    gcode_file.write('G00 C%.4f\n' % -30)
+    gcode_file.write('G00 C%.4f\n' % -45)
     # change to absolute coordinates
     gcode_file.write('G90\n')
     
@@ -224,7 +230,7 @@ def dock_tool(tool, tool_change, gcode_file):
     gcode_file.write('G00 Z%.4f C%.4f\n' % (tool_change['z_screw'], 
                                             tool_change['c_screw']))
     # continue to rotate C axis
-    gcode_file.write('G00 C%.4f\n' % 30)
+    gcode_file.write('G00 C%.4f\n' % 45)
     # change to absolute coordinates
     gcode_file.write('G90\n')
     

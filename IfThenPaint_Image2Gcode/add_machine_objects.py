@@ -44,12 +44,12 @@ paint_management = {'name': 'paint_management',
                     'x_workspace': 7} #x distance to position palette within workspace
 
 paint_palette = {'name': 'paint_palette',
-                 'x_min': 280,
-                 'x_max': 380,
+                 'x_min': 279,
+                 'x_max': 379,
                  'y_min': 233,
                  'y_max': 333,
-                 'y_margin': 5,
-                 'z_top': 21} 
+                 'y_margin': 10,
+                 'z_top': 20} 
 
 paint_water = {'name': 'paint_water',
                'y_water': 36,
@@ -58,7 +58,7 @@ paint_water = {'name': 'paint_water',
 
 paint_dispenser = {'name': 'paint_dispenser',
                    'angle_btw_dispensers': 36,
-                   'paint_bead_width': 4,
+                   'paint_bead_width': 5.75,
                    'paint_bead_height': 2,
                    'x_bead_offset': 10,
                    'z_clearance': 8, # relative to top of paint palette

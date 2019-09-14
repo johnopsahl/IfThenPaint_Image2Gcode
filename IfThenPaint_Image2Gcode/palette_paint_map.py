@@ -15,7 +15,7 @@ def palette_paint_map(layer_paint_distance, machine_objects, paints, tool_profil
     
     palette_paint_map = []
     dispenser_paint_volume = []
-    x_current = palette['x_max'] - dispenser['x_bead_offset']/2
+    x_current = palette['x_max'] - dispenser['x_bead_offset']
     
     for layer in layer_paint_distance:
         
