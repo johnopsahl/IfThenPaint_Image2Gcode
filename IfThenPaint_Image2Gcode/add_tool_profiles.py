@@ -6,8 +6,8 @@ from definitions import DATA_PATH
 # tool movement techniques and properties that are a consequence of the techniques,
 # changing these parameters will influence the "physical style" of the painting
 
-tool_profile_1 = {'name': '3_round_B0C0',
-                  'tool_name': '3_round',
+tool_profile_1 = {'name': '4_round_B0C0',
+                  'tool_name': '4_round',
                   'profile_width': 3,
                   'profile_length': 3,
                   'b_angle': 0,
@@ -24,8 +24,8 @@ tool_profile_1 = {'name': '3_round_B0C0',
 
 tool_profile_2 = {'name': '2_round_B0C0',
                   'tool_name': '2_round',
-                  'profile_width': 1.6,
-                  'profile_length': 1.6,
+                  'profile_width': 2.25,
+                  'profile_length': 2.25,
                   'b_angle': 0,
                   'c_angle': 0,
                   'c_axial_symmetry': 2,

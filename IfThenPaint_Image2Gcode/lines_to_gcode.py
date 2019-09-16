@@ -236,7 +236,10 @@ def palette_paint_dip(number_of_dips,
         # Z axis to canvas retract height
         gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
     
-    # check if enough paint bead length for next paint dip, delete if not
+    # Z axis to canvas retract height
+    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
+    
+    # check if enough paint bead length for next paint dip, delete from map if not
     if ((y_start - y_end) - paint_bead_length) >= paint_bead_length:
         brush_palette_paint_map[paint_bead_index]['y_start'] -= paint_bead_length
     else:

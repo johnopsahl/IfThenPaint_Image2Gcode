@@ -7,7 +7,7 @@ from definitions import DATA_PATH
 # tool length is the distance from the tool chuck to the end of the tool,
 # it is not used to generate gcode, it is just used for records
 
-tool_1 = {'name': '3_round',
+tool_1 = {'name': '4_round',
           'tool_length': 10,
           'x_dock': 48,
           'y_dock': 330,

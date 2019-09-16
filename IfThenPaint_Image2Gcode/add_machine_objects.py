@@ -12,10 +12,10 @@ canvas = {'name': 'canvas',
           'y_length': 160}
 
 brush_palette = {'name': 'brush_palette',
-                 'x_min': 8,
-                 'x_max': 108,
-                 'y_min': 90,
-                 'y_max': 290}
+                 'x_min': 11,
+                 'x_max': 111,
+                 'y_min': 92,
+                 'y_max': 292}
     
 brush_water = {'name': 'brush_water',
                'x_center': 244,
@@ -59,10 +59,10 @@ paint_water = {'name': 'paint_water',
 paint_dispenser = {'name': 'paint_dispenser',
                    'angle_btw_dispensers': 36,
                    'paint_bead_width': 5.75,
-                   'paint_bead_height': 2,
-                   'x_bead_offset': 10,
+                   'paint_bead_height': 3,
+                   'x_bead_offset': 12,
                    'z_clearance': 8, # relative to top of paint palette
-                   'b_clearance': 4, 
+                   'b_clearance': 4,
                    'b_initial_dispense': 0.75,
                    'b_dispense_rate': 2/40,
                    'b_probe_retract': 2,

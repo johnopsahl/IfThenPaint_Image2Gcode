@@ -66,7 +66,7 @@ def write_paint_gcode(project_name,
     # 694 -> feed rate in distance/minute units
     # G54 -> workspace coordinates
         
-    remove_from_water(paint_water, gcode_file)
+    go_to_water_z_clearance(paint_water, gcode_file)
     go_to_home(paint_management, gcode_file)
     
     for paint_row in paint_palette_map:          
@@ -89,6 +89,8 @@ def write_paint_gcode(project_name,
                        paint_management,
                        paint_palette,
                        gcode_file)
+    
+    go_to_water_z_clearance(paint_water, gcode_file)
     
     # go to 0 position of A axis prior to returning to water
     get_dispenser(0, paint_dispenser, paint_palette, gcode_file)
@@ -133,7 +135,8 @@ def dispense_paint(x_position, y_start, y_end,
     
     # change to relative coordinates
     gcode_file.write('G91\n')
-    # dispense a small amount of paint (to reduce viscosity of thixotropic paint
+    # dispense a little paint prior to perforing dispensing operation
+    # to account for initial resistance of paint through syringe
     gcode_file.write('G01 B%.4f\n' % dispenser['b_initial_dispense'])
     # dispense bead of paint
     gcode_file.write('G01 Y%.4f B%.4f\n' % (y_end - y_start, syringe_dispense))
@@ -146,17 +149,13 @@ def dispense_paint(x_position, y_start, y_end,
     gcode_file.write('G00 Z%.4f\n' % (dispenser['z_clearance']+
                                       palette['z_top']))
 
-def remove_from_water(paint_water, gcode_file):
+def go_to_water_z_clearance(paint_water, gcode_file):
     # remove syringe carousel from the paint water dish
     
     # change to relative coordinates
     gcode_file.write('G91\n')
     # raise to clearance height
     gcode_file.write('G00 Z%.4f\n' % paint_water['z_clearance'])
-    # jostle dispensers to reomve any water droplets
-    gcode_file.write('G00 A%.4f\n' % 45)
-    gcode_file.write('G00 A%.4f\n' % -90)
-    gcode_file.write('G00 A%.4f\n' % 45)
     # return to absolute coordinates
     gcode_file.write('G90\n')
     
@@ -171,8 +170,9 @@ def return_to_water(paint_water, gcode_file):
     
 def go_to_home(paint_management, gcode_file):
     # home X and Y, Z, and B axes (in that order) then set work coordinates
-
-    gcode_file.write('G04 P%.4f\n' % 3)
+    
+    # pause so the machine can go into idle state
+    gcode_file.write('G04 P%.4f\n' % 2) 
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
     gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,
