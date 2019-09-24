@@ -181,7 +181,7 @@ def sorted_lines_and_corners(line, profile_width, profile_length):
 
 def length_of_line(line):
     
-    #get length of each selected line
+    #get length of each line
     start, end = np.squeeze(np.hsplit(line, 2))
     x_start, y_start = np.squeeze(np.hsplit(start, 2))
     x_end, y_end = np.squeeze(np.hsplit(end, 2))
@@ -195,3 +195,22 @@ def length_of_line(line):
     length = distance_2d(x_start, y_start, x_end, y_end)
     
     return length
+
+def angle_of_line(line):
+    
+    #get length of each line
+    start, end = np.squeeze(np.hsplit(line, 2))
+    x_start, y_start = np.squeeze(np.hsplit(start, 2))
+    x_end, y_end = np.squeeze(np.hsplit(end, 2))
+    
+    if len(line) == 1:
+        x_start = np.asarray([x_start])
+        y_start = np.asarray([y_start])
+        x_end = np.asarray([x_end])
+        y_end = np.asarray([y_end])
+    
+    angle = np.arctan2(y_end - y_start, x_end - x_start)
+    
+    return angle
+    
+    

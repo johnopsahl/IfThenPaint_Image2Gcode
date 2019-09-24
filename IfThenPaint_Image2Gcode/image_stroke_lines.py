@@ -11,6 +11,7 @@ def stroke_lines_from_image(color_mask,
                             color_match_threshold,
                             scan_line_offset_overlap,
                             scan_line_increment_overlap):
+    # generates stroke lines from a bitmap image
     
     image_height, image_width = color_mask.shape[:2]
     scan_angle = math.radians(scan_angle)
@@ -114,7 +115,7 @@ def stroke_lines_from_image(color_mask,
     profile_center = profile_center[profile_valid_index]
     profile_center_index = profile_center_index[profile_valid_index]
     
-    # group profile center indices by scan line, this could be more efficient
+    # create a list of profile centers for each scan line, this could be more efficient
     scan_line_profile_index = [[] for x in last_profile_in_scan_line]
     
     for i in range(len(last_profile_in_scan_line)):
@@ -123,29 +124,45 @@ def stroke_lines_from_image(color_mask,
             first_profile_index = -1
         else:
             first_profile_index = last_profile_in_scan_line[i - 1]
-            
+        
+        # could be improved to exlude the range of profile centers that have 
+        # already been scanned
         for j in range(len(profile_center_index)):
             if first_profile_index < profile_center_index[j] <= last_profile_in_scan_line[i]:
                 scan_line_profile_index[i].append(j)
     
     scan_line_profile_index = np.asarray(scan_line_profile_index)
     
-    # determine stroke lines, could be more efficient
+    # determine stroke lines, this could be more efficient
     stroke_line = []
-         
+    
+    # for each scan line
     for i in range(len(scan_line_profile_index)):
         
+        # exclude scan lines that do not contain any valid profiles
         if len(scan_line_profile_index[i]) != 0:
             
             first_profile_in_scan_line = True
             
+            # for each valid profile center in the scan line
             for j in range(len(scan_line_profile_index[i])):
             
                 if first_profile_in_scan_line == True:
                     start = profile_center[scan_line_profile_index[i][j]]
+                    # multiplier of 0.001 used to add arbitrary small length to 
+                    # valid profile center (in the direction of the scan angle)
+                    # without any adjacent valid profile centers 
+                    # (i.e. a stroke line of zero length; a dot)
+                    # operations performed later on stroke lines require that
+                    # stroke lines have a length greater than zero
                     end = profile_center[scan_line_profile_index[i][j]] + \
-                          0.001*np.asarray([np.cos(scan_angle), np.sin(scan_angle)])
+                          0.001*np.asarray([np.cos(scan_angle), 
+                                            np.sin(scan_angle)])
                     first_profile_in_scan_line = False
+                    
+                # if the next profile center is adjacent to the previous
+                # profile center i.e. has an index value that is 1 greater 
+                # than the previous index value
                 elif (profile_center_index[scan_line_profile_index[i][j]] - \
                       profile_center_index[scan_line_profile_index[i][j - 1]]) == 1:
                     end = profile_center[scan_line_profile_index[i][j]]
@@ -153,8 +170,9 @@ def stroke_lines_from_image(color_mask,
                     stroke_line.append([[start[0], start[1]], [end[0], end[1]]])
                     start = profile_center[scan_line_profile_index[i][j]]
                     end = profile_center[scan_line_profile_index[i][j]] + \
-                          0.001*np.asarray([np.cos(scan_angle), np.sin(scan_angle)])
-                
+                          0.001*np.asarray([np.cos(scan_angle), 
+                                            np.sin(scan_angle)])
+                    
                 # if last profile in scan line
                 if j == (len(scan_line_profile_index[i]) - 1):
                     stroke_line.append([[start[0], start[1]], [end[0], end[1]]])

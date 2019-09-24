@@ -4,16 +4,16 @@ import geometry as geom
 def select_lines(line, 
                  profile_width, 
                  profile_length,
-                 line_length_min,
-                 line_select_width_overlap, 
-                 line_select_length_overlap):
+                 select_line_width_overlap, 
+                 select_line_length_overlap,
+                 select_line_min_length):
     # select longest lines that do not overlap eachother
     # and lines that are longer than the minimum line length
     
     line = np.asarray(line)
     
-    profile_width = profile_width*(1 - line_select_width_overlap)
-    profile_length = profile_length*(1 - line_select_length_overlap)
+    profile_width = profile_width*(1 - select_line_width_overlap)
+    profile_length = profile_length*(1 - select_line_length_overlap)
     
     line_sorted, \
     corner_sorted = geom.sorted_lines_and_corners(line, 
@@ -28,7 +28,7 @@ def select_lines(line,
     line_length = geom.length_of_line(line_select)
     
     # filter out all lines that are less than the minimum line length
-    line_select = np.asarray([x for x, y in zip(line_select, line_length) if y > line_length_min])
+    line_select = np.asarray([x for x, y in zip(line_select, line_length) if y > select_line_min_length])
     
     return line_select
 

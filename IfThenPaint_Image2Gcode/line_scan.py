@@ -30,9 +30,10 @@ scan_1 = {'name': 'process_1',
           'color_match_threshold': 0.4,
           'scan_line_offset_overlap': 0.1,
           'scan_line_increment_overlap': 0.1,
-          'profile_width_overlap_select': 0.001,
-          'profile_length_overlap_select': 0,
-          'line_length_min_select': 0}
+          'select_line_width_overlap': 0.001,
+          'select_line_length_overlap': 0,
+          'select_line_min_length': 0,
+          'stroke_line_max_length': 150}
 
 scan_2 = {'name': 'line_scan_green',
           'scan_color_bgr': [23, 41, 35],
@@ -48,27 +49,32 @@ scan_2 = {'name': 'line_scan_green',
           'color_match_threshold': 0.4,
           'scan_line_offset_overlap': 0,
           'scan_line_increment_overlap': 0.1,
-          'profile_width_overlap_select': 0.001,
-          'profile_length_overlap_select': 0,
-          'line_length_min_select': 0}
+          'select_line_width_overlap': 0.001,
+          'select_line_length_overlap': 0,
+          'select_line_min_length': 0,
+          'stroke_line_max_length': 150}
 
 def line_scan(scan, null_color):
-    # extracts the paint stroke lines from a bitmap image by paint color
+    # generates paint stroke lines from a bitmap image by paint color
     
     image_quant = cv2.imread(os.path.join(DATA_PATH, 'image_quant.png'))
     image_eval = image_quant.copy()
     
     scan_color = np.asarray(scan['scan_color_bgr'])
-            
+    
+    # convert length values to pixels
     profile_width = scan['profile_width']*scan['pixel_per_mm']
     profile_length = scan['profile_length']*scan['pixel_per_mm']
-    line_length_min = scan['line_length_min_select']*scan['pixel_per_mm']
+    select_line_min_length = scan['select_line_min_length']*scan['pixel_per_mm']
+    stroke_line_max_length = scan['stroke_line_max_length']*scan['pixel_per_mm']
     
     line_found = True
     line_selected = True
     scan_count = 1
     line_select_all = []
     
+    # continue scan until either lines can no longer be found 
+    # or none of the lines found are selected
     while line_found == True and line_selected == True:
         
         line_possible_all = []
@@ -110,9 +116,9 @@ def line_scan(scan, null_color):
             line_select = selctln.select_lines(line_possible_all,
                                                profile_width,
                                                profile_length,
-                                               line_length_min,
-                                               scan['profile_width_overlap_select'],
-                                               scan['profile_length_overlap_select'])
+                                               scan['select_line_width_overlap'],
+                                               scan['select_line_length_overlap'],
+                                               select_line_min_length)
             
             if len(line_select) == 0:
                 line_selected = False
@@ -152,7 +158,7 @@ def line_scan(scan, null_color):
 #        plt.show()
         
         cv2.imwrite(os.path.join(DATA_PATH, 'image_eval_final.png'), image_eval)
-           
+        
         line_sequence = sqnlns.sequence_lines(line_select_all, 
                                               scan['image_width_std'], 
                                               scan['image_height_std'], 
