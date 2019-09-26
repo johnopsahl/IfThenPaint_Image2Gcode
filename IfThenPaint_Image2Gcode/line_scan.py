@@ -10,6 +10,7 @@ import numpy as np
 import image_processing as imgproc
 import geometry as geom
 import image_stroke_lines as imgstrln
+import line_max_length as lnmaxlen
 import select_lines as selctln
 import sequence_lines as sqnlns
 from definitions import DATA_PATH
@@ -19,7 +20,7 @@ from definitions import DATA_PATH
 scan_1 = {'name': 'process_1',
           'scan_color_bgr': [42, 42, 42],
           'scan_angle_start': 0,
-          'scan_angle_increment': 45,
+          'scan_angle_increment': 90,
           'scan_angle_end': 180,
           'profile_width': 6,
           'profile_length': 6,
@@ -33,7 +34,7 @@ scan_1 = {'name': 'process_1',
           'select_line_width_overlap': 0.001,
           'select_line_length_overlap': 0,
           'select_line_min_length': 0,
-          'stroke_line_max_length': 150}
+          'stroke_line_max_length': 20}
 
 scan_2 = {'name': 'line_scan_green',
           'scan_color_bgr': [23, 41, 35],
@@ -156,7 +157,7 @@ def line_scan(scan, null_color):
 #        ax.margins(0.1)
 #        plt.gca().set_aspect('equal', adjustable='box')
 #        plt.show()
-        
+            
         cv2.imwrite(os.path.join(DATA_PATH, 'image_eval_final.png'), image_eval)
         
         line_sequence = sqnlns.sequence_lines(line_select_all, 
@@ -164,15 +165,28 @@ def line_scan(scan, null_color):
                                               scan['image_height_std'], 
                                               scan['pixel_grid_side_length'])
         
+        # If lines are less than the stroke line max length, split them into 
+        # lines no longer than the stroke line max length.
+        # This operation is performed at the end of the line scan operation 
+        # for efficiency and effect. The result if performed before or after
+        # the sequence line operation is expected to be equivalent, so the
+        # operation is performed after the sequence line operation to reduce
+        # the number of lines that the sequence line operation has to consider;
+        # which reduces computation time. The line max length operation is 
+        # performed after the longest line algorithm rather than as a
+        # component of it to maintain the longest line dominance visual effect.
+        line_modified = lnmaxlen.set_line_max_length(line_sequence,
+                                                      stroke_line_max_length)
+        
         # convert stroke line coordinates from pixels to mm
-        line_sequence = line_sequence/scan['pixel_per_mm']
+        line_final = line_modified/scan['pixel_per_mm']
         
         # convert to list
-        line_sequence = line_sequence.tolist()
+        line_final = line_final.tolist()
         
         print('line scan process complete!!')
         
-        return line_sequence 
+        return line_final
         
 if __name__ == '__main__':
     

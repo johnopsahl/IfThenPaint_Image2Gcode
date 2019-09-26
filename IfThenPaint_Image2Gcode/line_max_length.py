@@ -1,16 +1,13 @@
 import geometry as geom
 import numpy as np
 
-def enforce_line_max_length(lines, 
-                            line_max_length):
+def set_line_max_length(lines, 
+                        line_max_length):
     # reduce lines longer than the line max length into multiple lines of 
     # less than or equal length as the line max length
     
     line_length = geom.length_of_line(lines)
     line_angle = geom.angle_of_line(lines)
-    
-    print(line_length)
-    print(line_angle)
     
     lines_modified = []
     
@@ -47,8 +44,8 @@ def enforce_line_max_length(lines,
 
 if __name__ == '__main__':
     
-    lines = np.asarray([[[0, 0], [1, 1]], [[0, 0], [10, 10]]])
+    lines = np.asarray([[[0, 0], [-1, 1]], [[0, 0], [1, -1]]])
     
-    lines_modified = enforce_line_max_length(lines, 2)
+    lines_modified = set_line_max_length(lines, 1)
     
     print(lines_modified)
