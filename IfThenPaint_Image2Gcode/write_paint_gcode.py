@@ -117,7 +117,7 @@ def dispense_paint(x_position, y_start, y_end,
                    gcode_file):
     # dispense paint on the palette
     
-    syringe_dispense = dispenser['b_dispense_rate']*(y_start - y_end)
+    syringe_dispense = dispenser['b_dispense_ratio']*(y_start - y_end)
     
     # raise to palette clearance height
     gcode_file.write('G00 Z%.4f\n' % (dispenser['z_clearance'] +
@@ -129,15 +129,18 @@ def dispense_paint(x_position, y_start, y_end,
                                       palette['z_top']))
     # probe for syringe plunger level, stop when probe switch is activated
     gcode_file.write('G38.3 B%.4f F%.4f\n' % (paint_management['b_max_travel'],
-                                              dispenser['b_feedrate']))
+                                              dispenser['b_probe_feedrate']))
     
     # change to relative coordinates
     gcode_file.write('G91\n')
     # dispense a little paint prior to perforing dispensing operation
     # to account for initial resistance of paint through syringe
-    gcode_file.write('G01 B%.4f\n' % dispenser['b_initial_dispense'])
+    gcode_file.write('G01 B%.4f F%.4f\n' % (dispenser['b_initial_dispense'], 
+                                           dispenser['dispense_feedrate']))
     # dispense bead of paint
-    gcode_file.write('G01 Y%.4f B%.4f\n' % (y_end - y_start, syringe_dispense))
+    gcode_file.write('G01 Y%.4f B%.4f F%.4f\n' % (y_end - y_start, 
+                                                 syringe_dispense,
+                                                 dispenser['dispense_feedrate']))
     # raise push plate limit off of syringe plunger so it is no longer activated
     gcode_file.write('G00 B%.4f\n' % -dispenser['b_probe_retract'])
     # return to absolute coordinates
@@ -170,7 +173,7 @@ def go_to_home(paint_management, gcode_file):
     # home X and Y, Z, and B axes (in that order) then set work coordinates
     
     # pause so the machine can go into idle state
-    gcode_file.write('G04 P%.4f\n' % 2) 
+    gcode_file.write('G04 P%.4f\n' % 0.5) 
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
     gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,

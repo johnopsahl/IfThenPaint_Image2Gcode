@@ -40,7 +40,7 @@ tool_change = {'name': 'tool_change',
 
 paint_management = {'name': 'paint_management',
                     'y_max_travel': 336,
-                    'b_max_travel': 98,
+                    'b_max_travel': 90,
                     'x_workspace': 7} #x distance to position palette within workspace
 
 paint_palette = {'name': 'paint_palette',
@@ -49,24 +49,25 @@ paint_palette = {'name': 'paint_palette',
                  'y_min': 233,
                  'y_max': 333,
                  'y_margin': 10,
-                 'z_top': 19} 
+                 'z_top': 23} 
 
 paint_water = {'name': 'paint_water',
                'y_water': 36,
-               'z_water': 2,
-               'z_clearance': 27}
+               'z_water': 3,
+               'z_clearance': 32}
 
 paint_dispenser = {'name': 'paint_dispenser',
                    'angle_btw_dispensers': 36,
                    'paint_bead_width': 5.75,
-                   'paint_bead_height': 2,
+                   'paint_bead_height': 1,
                    'x_bead_offset': 12,
                    'z_clearance': 8, # relative to top of paint palette
-                   'b_clearance': 4,
-                   'b_initial_dispense': 0.3,
-                   'b_dispense_rate': 0.25/10,
+                   'b_clearance': 22,
+                   'b_initial_dispense': 0.1,
+                   'b_dispense_ratio': 0.5/10,
+                   'dispense_feedrate': 50,
                    'b_probe_retract': 2,
-                   'b_feedrate': 1000}
+                   'b_probe_feedrate': 1200}
 
 machine_objects = [canvas,
                    brush_palette,

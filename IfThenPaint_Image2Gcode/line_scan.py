@@ -34,7 +34,7 @@ scan_1 = {'name': 'process_1',
           'select_line_width_overlap': 0.001,
           'select_line_length_overlap': 0,
           'select_line_min_length': 0,
-          'stroke_line_max_length': 20}
+          'stroke_line_max_length': 10}
 
 scan_2 = {'name': 'line_scan_green',
           'scan_color_bgr': [23, 41, 35],
