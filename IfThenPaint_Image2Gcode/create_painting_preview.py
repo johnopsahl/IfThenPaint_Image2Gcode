@@ -9,7 +9,6 @@ from definitions import DATA_PATH
 def create_painting_preview(layers,
                             processes,
                             process_lines,
-                            paints,
                             tool_profiles):
     # creates an preview image of the painting using the layers that have been
     # defined
@@ -28,11 +27,7 @@ def create_painting_preview(layers,
         process = processes[process_index]
         pixel_per_mm = process['pixel_per_mm']
         
-        paint_name = layer['paint_name']
-        paint_name_list = [x['name'] for x in paints]
-        paint_index = paint_name_list.index(paint_name)
-        paint = paints[paint_index]
-        paint_color_rgb = paint['paint_color_rgb']
+        paint_color_rgb = layer['paint_color_rgb']
         
         tool_profile_name = layer['tool_profile_name']
         tool_profile_name_list = [x['name'] for x in tool_profiles]
@@ -84,10 +79,6 @@ if __name__ == '__main__':
         process_lines = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'paints.txt'), 'r') as f:
-        paints = json.load(f)
-    f.close()
-    
     with open(os.path.join(DATA_PATH, 'tool_profiles.txt'), 'r') as f:
         tool_profiles = json.load(f)
     f.close()
@@ -95,5 +86,4 @@ if __name__ == '__main__':
     create_painting_preview(layers,
                             processes,
                             process_lines,
-                            paints,
                             tool_profiles)

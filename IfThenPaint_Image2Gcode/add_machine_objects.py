@@ -49,7 +49,7 @@ paint_palette = {'name': 'paint_palette',
                  'y_min': 233,
                  'y_max': 333,
                  'y_margin': 10,
-                 'z_top': 23} 
+                 'z_top': 22} 
 
 paint_water = {'name': 'paint_water',
                'y_water': 36,
@@ -58,14 +58,14 @@ paint_water = {'name': 'paint_water',
 
 paint_dispenser = {'name': 'paint_dispenser',
                    'angle_btw_dispensers': 36,
-                   'paint_bead_width': 5.75,
-                   'paint_bead_height': 1,
+                   'paint_bead_width': 5.75, # move to json
+                   'paint_bead_height': 1.75, # move to json
                    'x_bead_offset': 12,
                    'z_clearance': 8, # relative to top of paint palette
                    'b_clearance': 22,
-                   'b_initial_dispense': 0.1,
-                   'b_dispense_ratio': 0.5/10,
-                   'dispense_feedrate': 50,
+                   'b_initial_dispense': 0, # move to json
+                   'b_dispense_ratio': 0.051/10, # move to json
+                   'dispense_feedrate': 50, # move to json
                    'b_probe_retract': 2,
                    'b_probe_feedrate': 1200}
 

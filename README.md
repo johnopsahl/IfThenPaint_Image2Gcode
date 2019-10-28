@@ -6,7 +6,7 @@ Script run sequence:
 2. quantisize_image
 3. add_tools
 4. add_tool_profiles
-5. add_paints
+5. add_stock_paints
 6. add_machine_objects
 7. line_scan
 8. commit_process/remove_process

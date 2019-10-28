@@ -5,7 +5,7 @@ from definitions import DATA_PATH
 
 def write_paint_gcode(project_name,
                       paint_palette_map,
-                      dispenser_paint_volume,
+                      dispense_paint_volume,
                       machine_objects,
                       paints):
     # generates the gcode file used by the paint management system to 
@@ -33,7 +33,7 @@ def write_paint_gcode(project_name,
     
     # write paint volumes required to gcode file
     gcode_file.write('(PAINT VOLUME CM^3 REQUIRED)\n')
-    for paint_volume in dispenser_paint_volume:
+    for paint_volume in dispense_paint_volume:
         for key in paint_volume:
             gcode_file.write('(' + str(key) + ' , ' + str(paint_volume[key]) + ')\n')
         gcode_file.write('\n')
@@ -71,11 +71,11 @@ def write_paint_gcode(project_name,
     
     for paint_row in paint_palette_map:          
         
-        paint_name = paint_row['paint_name']
-        paint_name_list = [x['name'] for x in paints]
-        paint_index = paint_name_list.index(paint_name)
+        paint_color_rgb = paint_row['paint_color_rgb']
+        paint_name_list = [x['color_rgb'] for x in stock_paints]
+        paint_index = paint_name_list.index(paint_color_rgb)
         paint = paints[paint_index]
-        dispenser_position = paint['dispenser_position']
+        dispenser_position = paint['position']
         
         get_dispenser(dispenser_position, 
                       paint_dispenser, 
@@ -191,20 +191,20 @@ if __name__ == '__main__':
         paint_palette_map = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'dispenser_paint_volume.txt'), 'r') as f:
-        dispenser_paint_volume = json.load(f)
+    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'r') as f:
+        dispense_paint_volume = json.load(f)
     f.close()
     
     with open(os.path.join(DATA_PATH, 'machine_objects.txt'), 'r') as f:
         machine_objects = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'paints.txt'), 'r') as f:
-        paints = json.load(f)
+    with open(os.path.join(DATA_PATH, 'stock_paints.txt'), 'r') as f:
+        stock_paints = json.load(f)
     f.close()
     
     write_paint_gcode('jackie',
                       paint_palette_map,
-                      dispenser_paint_volume,
+                      dispense_paint_volume,
                       machine_objects,
-                      paints)
+                      stock_paints)

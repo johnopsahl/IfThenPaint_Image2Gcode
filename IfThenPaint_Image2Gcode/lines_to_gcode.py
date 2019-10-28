@@ -208,10 +208,10 @@ def palette_paint_dip(number_of_dips,
     
     # identify bead of paint in palette paint map that matches paint color and
     # tool profile
-    paint_name = paint['name']
+    paint_color_rgb = paint['color_rgb']
     tool_profile_name = tool_profile['name']
     for i in range(len(brush_palette_paint_map)):
-        if (brush_palette_paint_map[i]['paint_name'] == paint_name and 
+        if (brush_palette_paint_map[i]['paint_color_rgb'] == paint_color_rgb and 
             brush_palette_paint_map[i]['tool_profile_name'] == tool_profile_name):
             paint_bead_index = i
             break

@@ -6,8 +6,7 @@ from definitions import DATA_PATH
 
 def layer_paint_distance(layers,
                          processes,
-                         process_lines,
-                         paints):
+                         process_lines):
     # generates a list of how far the tool travels on the canvas for each layer
     
     paint_distance = []
@@ -18,12 +17,12 @@ def layer_paint_distance(layers,
         process_name_list = [x['name'] for x in processes]
         process_index = process_name_list.index(process_name)
         
-        paint_name = layer['paint_name']
+        paint_color_rgb = layer['paint_color_rgb']
         tool_profile_name = layer['tool_profile_name']
         
         distance_on_canvas = canvas_paint_distance(process_lines[process_index])
         
-        paint_distance.append({'paint_name': paint_name,
+        paint_distance.append({'paint_color_rgb': paint_color_rgb,
                                'tool_profile_name': tool_profile_name,
                                'paint_distance': distance_on_canvas})
     
@@ -56,14 +55,9 @@ if __name__ == '__main__':
         process_lines = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'paints.txt'), 'r') as f:
-        paints = json.load(f)
-    f.close()
-    
     paint_distance = layer_paint_distance(layers, 
                                           processes, 
-                                          process_lines, 
-                                          paints)
+                                          process_lines)
     
     with open(os.path.join(DATA_PATH, 'layer_paint_distance.txt'), 'w') as f:
         json.dump(paint_distance, f, separators = (',', ':'), sort_keys = True, indent = 4)

@@ -7,7 +7,7 @@ from definitions import DATA_PATH
 
 def write_brush_gcode(project_name,
                       machine_objects,
-                      paints,
+                      stock_paints,
                       tools,
                       tool_profiles,
                       layers,
@@ -91,21 +91,21 @@ def write_brush_gcode(project_name,
         
         process_name = layer['process_name']
         tool_profile_name = layer['tool_profile_name']
-        paint_name = layer['paint_name']
+        paint_color_rgb = layer['paint_color_rgb']
         
         process_name_list = [x['name'] for x in processes]
         tool_profile_name_list = [x['name'] for x in tool_profiles]
         tool_name_list = [x['name'] for x in tools]
-        paint_name_list = [x['name'] for x in paints]
+        paint_color_rgb_list = [x['color_rgb'] for x in stock_paints]
         
         process_index = process_name_list.index(process_name)
         tool_profile_index = tool_profile_name_list.index(tool_profile_name)
-        paint_index = paint_name_list.index(paint_name)
+        paint_index = paint_color_rgb_list.index(paint_color_rgb)
         
         process = processes[process_index]
         process_line = process_lines[process_index]
         tool_profile = tool_profiles[tool_profile_index]
-        paint = paints[paint_index]
+        paint = stock_paints[paint_index]
         
         tool_name = tool_profile['tool_name']
         tool_index = tool_name_list.index(tool_name)
@@ -247,8 +247,8 @@ if __name__ == '__main__':
         machine_objects = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'paints.txt'), 'r') as f:
-        paints = json.load(f)
+    with open(os.path.join(DATA_PATH, 'stock_paints.txt'), 'r') as f:
+        stock_paints = json.load(f)
     f.close()
     
     with open(os.path.join(DATA_PATH, 'tools.txt'), 'r') as f:
@@ -277,7 +277,7 @@ if __name__ == '__main__':
     
     write_brush_gcode('jackie',
                       machine_objects,
-                      paints,
+                      stock_paints,
                       tools,
                       tool_profiles,
                       layers,
