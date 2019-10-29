@@ -5,7 +5,6 @@ from definitions import DATA_PATH
 
 def write_paint_gcode(project_name,
                       paint_palette_map,
-                      dispense_paint_volume,
                       machine_objects,
                       paints):
     # generates the gcode file used by the paint management system to 
@@ -32,12 +31,12 @@ def write_paint_gcode(project_name,
     paint_water = machine_objects[paint_water_index]
     
     # write paint volumes required to gcode file
-    gcode_file.write('(PAINT VOLUME CM^3 REQUIRED)\n')
-    for paint_volume in dispense_paint_volume:
-        for key in paint_volume:
-            gcode_file.write('(' + str(key) + ' , ' + str(paint_volume[key]) + ')\n')
-        gcode_file.write('\n')
-    
+#    gcode_file.write('(PAINT VOLUME CM^3 REQUIRED)\n')
+#    for paint_volume in dispense_paint_volume:
+#        for key in paint_volume:
+#            gcode_file.write('(' + str(key) + ' , ' + str(paint_volume[key]) + ')\n')
+#        gcode_file.write('\n')
+
     # write object parameters to gcode file
     gcode_file.write('(PAINT MANAGEMENT)\n')
     for key in paint_management:
@@ -82,9 +81,7 @@ def write_paint_gcode(project_name,
                       paint_palette, 
                       gcode_file)
         
-        dispense_paint(paint_row['x_position'],
-                       paint_row['y_start'],
-                       paint_row['y_end'],
+        dispense_paint(paint_row,
                        paint_dispenser,
                        paint_management,
                        paint_palette,
@@ -112,20 +109,23 @@ def get_dispenser(dispenser_position, dispenser, palette, gcode_file):
     # rotate carousel to position dispenser above push plate
     gcode_file.write('G00 A%.4f\n' % dispenser_angle)
     
-def dispense_paint(x_position, y_start, y_end, 
-                   dispenser, paint_management, palette, 
+def dispense_paint(paint_row, 
+                   dispenser, 
+                   paint_management, 
+                   palette, 
                    gcode_file):
     # dispense paint on the palette
     
-    syringe_dispense = dispenser['b_dispense_ratio']*(y_start - y_end)
+    syringe_dispense = \
+    paint_row['b_dispense_ratio']*(paint_row['y_start'] - paint_row['y_end'])
     
     # raise to palette clearance height
     gcode_file.write('G00 Z%.4f\n' % (dispenser['z_clearance'] +
                                       palette['z_top']))
     # go to start of paint bead
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, y_start))
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (paint_row['x_position'], paint_row['y_start']))
     # go to dispense height
-    gcode_file.write('G00 Z%.4f\n' % (dispenser['paint_bead_height'] + 
+    gcode_file.write('G00 Z%.4f\n' % (paint_row['paint_bead_height'] + 
                                       palette['z_top']))
     # probe for syringe plunger level, stop when probe switch is activated
     gcode_file.write('G38.3 B%.4f F%.4f\n' % (paint_management['b_max_travel'],
@@ -135,12 +135,12 @@ def dispense_paint(x_position, y_start, y_end,
     gcode_file.write('G91\n')
     # dispense a little paint prior to perforing dispensing operation
     # to account for initial resistance of paint through syringe
-    gcode_file.write('G01 B%.4f F%.4f\n' % (dispenser['b_initial_dispense'], 
-                                           dispenser['dispense_feedrate']))
+    gcode_file.write('G01 B%.4f F%.4f\n' % (paint_row['b_initial_dispense'], 
+                                            paint_row['dispense_feedrate']))
     # dispense bead of paint
-    gcode_file.write('G01 Y%.4f B%.4f F%.4f\n' % (y_end - y_start, 
-                                                 syringe_dispense,
-                                                 dispenser['dispense_feedrate']))
+    gcode_file.write('G01 Y%.4f B%.4f F%.4f\n' % (paint_row['y_end'] - paint_row['y_start'], 
+                                                  syringe_dispense,
+                                                  paint_row['dispense_feedrate']))
     # raise push plate limit off of syringe plunger so it is no longer activated
     gcode_file.write('G00 B%.4f\n' % -dispenser['b_probe_retract'])
     # return to absolute coordinates
@@ -191,9 +191,9 @@ if __name__ == '__main__':
         paint_palette_map = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'r') as f:
-        dispense_paint_volume = json.load(f)
-    f.close()
+#    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'r') as f:
+#        dispense_paint_volume = json.load(f)
+#    f.close()
     
     with open(os.path.join(DATA_PATH, 'machine_objects.txt'), 'r') as f:
         machine_objects = json.load(f)
@@ -205,6 +205,5 @@ if __name__ == '__main__':
     
     write_paint_gcode('jackie',
                       paint_palette_map,
-                      dispense_paint_volume,
                       machine_objects,
                       stock_paints)

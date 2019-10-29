@@ -16,7 +16,7 @@ def palette_paint_map(layer_paint_distance,
     dispenser = machine_objects[paint_dispenser_index]
     
     palette_paint_map = []
-    dispense_paint_volume = []
+#    dispense_paint_volume = []
     x_current = palette['x_max'] - dispenser['x_bead_offset']
     
     for layer in layer_paint_distance:
@@ -43,9 +43,12 @@ def palette_paint_map(layer_paint_distance,
         
         # calculate paint volume to determine the minimum amount of paint to
         # load into each dispenser prior to the painting
-        paint_bead_volume = paint_bead_distance/10*(dispenser['paint_bead_width']/10)*(dispenser['paint_bead_height']/10)
-        dispense_paint_volume.append({'paint_color_rgb': paint_color_rgb, 
-                                      'paint_volume': paint_bead_volume})
+        
+        # temporarily comment out until, bead width prediction has been 
+        # experimentally validated
+#        paint_bead_volume = paint_bead_distance/10*(dispenser['paint_bead_width']/10)*(dispenser['paint_bead_height']/10)
+#        dispense_paint_volume.append({'paint_color_rgb': paint_color_rgb, 
+#                                      'paint_volume': paint_bead_volume})
         
         while paint_bead_distance > 0:
             if x_current + 1.5*dispenser['x_bead_offset'] > palette['x_min']:
@@ -54,7 +57,11 @@ def palette_paint_map(layer_paint_distance,
                                               'tool_profile_name': tool_profile_name,
                                               'x_position': x_current,
                                               'y_start': palette_y_start,
-                                              'y_end': palette_y_start - paint_bead_length_max})
+                                              'y_end': palette_y_start - paint_bead_length_max,
+                                              'paint_bead_height': dispenser['paint_bead_height'],
+                                              'b_initial_dispense': dispenser['b_initial_dispense'],
+                                              'b_dispense_ratio': dispenser['b_dispense_ratio'],
+                                              'dispense_feedrate': dispenser['dispense_feedrate']})
                     x_current -= dispenser['x_bead_offset']
                     paint_bead_distance -= paint_bead_length_max
                 else:
@@ -62,14 +69,18 @@ def palette_paint_map(layer_paint_distance,
                                               'tool_profile_name': tool_profile_name,
                                               'x_position': x_current,
                                               'y_start': palette_y_start,
-                                              'y_end': palette_y_start - paint_bead_distance})
+                                              'y_end': palette_y_start - paint_bead_distance,
+                                              'paint_bead_height': dispenser['paint_bead_height'],
+                                              'b_initial_dispense': dispenser['b_initial_dispense'],
+                                              'b_dispense_ratio': dispenser['b_dispense_ratio'],
+                                              'dispense_feedrate': dispenser['dispense_feedrate']})
                     x_current -= dispenser['x_bead_offset']
                     paint_bead_distance = 0
             else:
                 print('Too much paint, not enough palette, palette x dimension exceeded!!')
                 break
 
-    return palette_paint_map, dispense_paint_volume
+    return palette_paint_map
 
 if __name__ == '__main__':
         
@@ -85,13 +96,13 @@ if __name__ == '__main__':
         tool_profiles = json.load(f)
     f.close()
     
-    palette_paint_map, dispense_paint_volume = palette_paint_map(layer_paint_distance,
-                                                                 machine_objects,
-                                                                 tool_profiles)
+    palette_paint_map = palette_paint_map(layer_paint_distance,
+                                          machine_objects,
+                                          tool_profiles)
     
-    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'w') as f:
-        json.dump(dispense_paint_volume, f, separators = (',', ':'), sort_keys = True, indent = 4)
-    f.close()
+#    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'w') as f:
+#        json.dump(dispense_paint_volume, f, separators = (',', ':'), sort_keys = True, indent = 4)
+#    f.close()
     
     with open(os.path.join(DATA_PATH, 'palette_paint_map.txt'), 'w') as f:
         json.dump(palette_paint_map, f, separators = (',', ':'), sort_keys = True, indent = 4)

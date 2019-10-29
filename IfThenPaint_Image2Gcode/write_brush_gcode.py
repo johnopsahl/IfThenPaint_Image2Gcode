@@ -45,10 +45,10 @@ def write_brush_gcode(project_name,
     palette_x_offset = brush_palette['x_max'] - paint_palette['x_max']
     palette_y_offset = brush_palette['y_max'] - paint_palette['y_max']
     
-    for paint_bead in brush_palette_paint_map:
-        paint_bead['x_position'] += palette_x_offset
-        paint_bead['y_start'] += palette_y_offset
-        paint_bead['y_end'] += palette_y_offset
+    for paint_row in brush_palette_paint_map:
+        paint_row['x_position'] += palette_x_offset
+        paint_row['y_start'] += palette_y_offset
+        paint_row['y_end'] += palette_y_offset
         
     # write object parameters to gcode file
     gcode_file.write('(CANVAS)\n')

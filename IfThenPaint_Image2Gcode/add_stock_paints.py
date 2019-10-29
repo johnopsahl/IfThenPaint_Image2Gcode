@@ -2,61 +2,39 @@ import os
 import json
 from definitions import DATA_PATH
 
-# define all paints available to the machine
-paint_1 = {'name': 'gray_0',
-           'color_rgb': [200, 200, 200],
+# define all stock paints available to the machine
+
+paint_1 = {'name': 'red',
+           'color_rgb': [255, 0, 0],
            'position': 0}
 
-paint_2 = {'name': 'gray_1',
-           'color_rgb': [164, 164, 164],
+paint_2 = {'name': 'yellow',
+           'color_rgb': [255, 255, 0],
            'position': 1}
 
-paint_3 = {'name': 'gray_2',
-           'color_rgb': [106, 106, 106],
+paint_3 = {'name': 'green',
+           'color_rgb': [0, 255, 0],
            'position': 2}
 
-paint_4 = {'name': 'gray_3',
-           'color_rgb': [60, 60, 60],
+paint_4 = {'name': 'blue',
+           'color_rgb': [0, 0, 255],
            'position': 3}
 
-paint_5 = {'name': 'gray_4',
-           'color_rgb': [34, 34, 34],
+paint_5 = {'name': 'black',
+           'color_rgb': [0, 0, 0],
            'position': 4}
 
-#paint_1 = {'name': 'red',
-#           'paint_color_rgb': [255, 0, 0],
-#           'dispenser_position': 0}
-#
-#paint_2 = {'name': 'yellow',
-#           'paint_color_rgb': [255, 255, 0],
-#           'dispenser_position': 1}
-#
-#paint_3 = {'name': 'green',
-#           'paint_color_rgb': [0, 255, 0],
-#           'dispenser_position': 2}
-#
-#paint_4 = {'name': 'blue',
-#           'paint_color_rgb': [0, 0, 255],
-#           'dispenser_position': 3}
-#
-#paint_5 = {'name': 'black',
-#           'paint_color_rgb': [0, 0, 0],
-#           'dispenser_position': 4}
-#
-#paint_6 = {'name': 'white',
-#           'paint_color_rgb': [255, 255, 255],
-#           'dispenser_position': 5}
-#
-#paint_7 = {'name': 'gray',
-#           'paint_color_rgb': [128, 128, 128],
-#           'dispenser_position': 6}
+paint_6 = {'name': 'white',
+           'color_rgb': [255, 255, 255],
+           'position': 5}
 
-paints = [paint_1, 
-          paint_2, 
-          paint_3, 
-          paint_4, 
-          paint_5]
+stock_paints = [paint_1, 
+                paint_2, 
+                paint_3, 
+                paint_4, 
+                paint_5,
+                paint_6]
 
 with open(os.path.join(DATA_PATH, 'stock_paints.txt'), 'w') as f:
-    json.dump(paints, f, separators = (',', ':'), sort_keys = True, indent = 4)
+    json.dump(stock_paints, f, separators = (',', ':'), sort_keys = True, indent = 4)
 f.close()
