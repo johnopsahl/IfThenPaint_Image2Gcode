@@ -95,11 +95,11 @@ def map_palette(layer_paint_dips,
                                           'bead_group_x_span': bead_group_x_span,
                                           'bead_y_increment': y_increment,
                                           'x_row': x_current + bead_group_x_span/2,
-                                          'y_start': y_start,
+                                          'y_start': y_start - y_increment, # advance by y_increment for first bead scrap
                                           'y_end': y_end})
                         
                 # for each stock paint that is mixed together to create the paint color
-                for i in range(0, len(paint_color['paint_color_comp'])):
+                for i in range(len(paint_color['paint_color_comp'])):
                     
                     stock_paint = paint_color['paint_color_comp'][paint_percent_index[i]]
                     stock_paint_color = stock_paint[0]

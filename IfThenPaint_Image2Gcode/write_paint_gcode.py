@@ -146,7 +146,7 @@ def dispense_paint(paint_row,
         gcode_file.write('G04 P%.4f\n' % 2)
         
         # move to next paint bead
-        gcode_file.write('G00 X%.4f Y%.4f\n' % (paint_row['x_row'], y_current))
+        gcode_file.write('G00 Y%.4f\n' % -y_increment)
         
         y_current -= y_increment
         
@@ -213,7 +213,7 @@ if __name__ == '__main__':
         stock_paints = json.load(f)
     f.close()
     
-    write_paint_gcode('jackie',
+    write_paint_gcode('Jackie',
                       palette_paint_map,
                       machine_objects,
                       stock_paints)

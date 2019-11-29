@@ -13,7 +13,7 @@ Script run sequence:
 9. commit_process/remove_process
 10. add_layer
 11. create_painting_preview
-12. layer_painting_distance
-13. palette_paint_map
+12. layer_paint_dips
+13. map_palette
 14. write_brush_gcode 
 15. write_paint_gcode

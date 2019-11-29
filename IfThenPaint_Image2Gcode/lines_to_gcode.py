@@ -5,8 +5,8 @@ import geometry as geom
 def stroke_lines_to_paint_gcode(line, 
                                 tool_profile,
                                 tool,
-                                paint, 
-                                brush_palette_paint_map, 
+                                paint_color, 
+                                palette_brush_map, 
                                 water, 
                                 towel, 
                                 gcode_file):
@@ -56,15 +56,17 @@ def stroke_lines_to_paint_gcode(line,
                 towel = towel_wipe(2, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
                 brush_palette_paint_map = palette_paint_dip(2, 
-                                                            brush_palette_paint_map,
-                                                            paint, tool_profile, 
+                                                            palette_brush_map,
+                                                            paint_color, 
+                                                            tool_profile, 
                                                             gcode_file)
                 paint_dist = tool_profile['paint_dist_max']
                 
             if paint_dist == 0:  # when paint brush runs out of paint, dip in paint
                 brush_palette_paint_map = palette_paint_dip(2, 
-                                                            brush_palette_paint_map,
-                                                            paint, tool_profile, 
+                                                            palette_brush_map,
+                                                            paint_color,
+                                                            tool_profile, 
                                                             gcode_file)
                 paint_dist = tool_profile['paint_dist_max']
                 
@@ -200,35 +202,35 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
     return towel
 
 def palette_paint_dip(number_of_dips, 
-                      brush_palette_paint_map, 
-                      paint, 
+                      palette_brush_map, 
+                      paint_color, 
                       tool_profile, 
                       gcode_file):
     # load tool with paint, paint is a consumable object
     
-    # identify bead of paint in palette paint map that matches paint color and
-    # tool profile
-    paint_color_rgb = paint['color_rgb']
+    # identify bead of paint in palette brush map that matches paint color and
+    # tool profile; perhaps there is a way to avoid doing this for every palette
+    # paint dip operation
+    paint_color_rgb = paint_color['color_rgb']
     tool_profile_name = tool_profile['name']
-    for i in range(len(brush_palette_paint_map)):
-        if (brush_palette_paint_map[i]['paint_color_rgb'] == paint_color_rgb and 
-            brush_palette_paint_map[i]['tool_profile_name'] == tool_profile_name):
-            paint_bead_index = i
+    for i in range(len(palette_brush_map)):
+        if (palette_brush_map[i]['paint_color_rgb'] == paint_color_rgb and 
+            palette_brush_map[i]['tool_profile_name'] == tool_profile_name):
+            bead_row_index = i
             break
         
-    paint_bead = brush_palette_paint_map[paint_bead_index]
+    bead_row = palette_brush_map[bead_row_index]
     
-    x_position = paint_bead['x_position']
-    y_start = paint_bead['y_start']
-    y_end = paint_bead['y_end']
-    paint_bead_length = tool_profile['paint_bead_length']
-           
+    y_increment = bead_row['y_increment']
+    x_position = bead_row['x_row']
+    y_start = bead_row['y_start']
+    y_end = bead_row['y_end']
+
     # Z axis to canvas retract height
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
 
     # go to paint bead dip location
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position,
-                                            y_start - paint_bead_length/2))
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, y_start))
     
     for i in range(number_of_dips):
         # dip brush into paint
@@ -240,12 +242,12 @@ def palette_paint_dip(number_of_dips,
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
     
     # check if enough paint bead length for next paint dip, delete from map if not
-    if ((y_start - y_end) - paint_bead_length) >= paint_bead_length:
-        brush_palette_paint_map[paint_bead_index]['y_start'] -= paint_bead_length
+    if abs(y_end - y_start) - y_increment >= y_increment:
+        bead_row['y_start'] -= y_increment
     else:
-        del brush_palette_paint_map[paint_bead_index]
+        del palette_brush_map[bead_row_index]
 
-    return brush_palette_paint_map
+    return palette_brush_map
         
 ## paint dip operation for paint bins
 #def paint_dip(number_of_dips, paint, tool_profile, gcode_file):

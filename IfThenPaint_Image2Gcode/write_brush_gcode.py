@@ -7,13 +7,13 @@ from definitions import DATA_PATH
 
 def write_brush_gcode(project_name,
                       machine_objects,
-                      stock_paints,
+                      paint_colors,
                       tools,
                       tool_profiles,
                       layers,
                       processes,
                       process_lines,
-                      brush_palette_paint_map):
+                      palette_brush_map):
     # generates the gcode file used by the six axis brush cnc machine to 
     # paint on the canvas
     
@@ -33,6 +33,7 @@ def write_brush_gcode(project_name,
     towel_index = machine_object_name_list.index('towel')
     tool_change_index = machine_object_name_list.index('tool_change')
     paint_palette_index = machine_object_name_list.index('paint_palette')
+    
     canvas = machine_objects[canvas_index]
     brush_palette = machine_objects[brush_palette_index]
     brush_water = machine_objects[brush_water_index]
@@ -45,8 +46,8 @@ def write_brush_gcode(project_name,
     palette_x_offset = brush_palette['x_max'] - paint_palette['x_max']
     palette_y_offset = brush_palette['y_max'] - paint_palette['y_max']
     
-    for paint_row in brush_palette_paint_map:
-        paint_row['x_position'] += palette_x_offset
+    for paint_row in palette_brush_map:
+        paint_row['x_row'] += palette_x_offset
         paint_row['y_start'] += palette_y_offset
         paint_row['y_end'] += palette_y_offset
         
@@ -96,16 +97,16 @@ def write_brush_gcode(project_name,
         process_name_list = [x['name'] for x in processes]
         tool_profile_name_list = [x['name'] for x in tool_profiles]
         tool_name_list = [x['name'] for x in tools]
-        paint_color_rgb_list = [x['color_rgb'] for x in stock_paints]
+        paint_color_rgb_list = [x['color_rgb'] for x in paint_colors]
         
         process_index = process_name_list.index(process_name)
         tool_profile_index = tool_profile_name_list.index(tool_profile_name)
-        paint_index = paint_color_rgb_list.index(paint_color_rgb)
+        paint_color_index = paint_color_rgb_list.index(paint_color_rgb)
         
         process = processes[process_index]
         process_line = process_lines[process_index]
         tool_profile = tool_profiles[tool_profile_index]
-        paint = stock_paints[paint_index]
+        paint_color = paint_colors[paint_color_index]
         
         tool_name = tool_profile['tool_name']
         tool_index = tool_name_list.index(tool_name)
@@ -134,8 +135,8 @@ def write_brush_gcode(project_name,
         gcode_file.write('\n')
         
         gcode_file.write('(PAINT)\n')
-        for key in paint:
-            gcode_file.write('(' + str(key) + ' , ' + str(paint[key]) + ')\n')
+        for key in paint_color:
+            gcode_file.write('(' + str(key) + ' , ' + str(paint_color[key]) + ')\n')
         gcode_file.write('\n')
         
         # get or dock tool
@@ -154,12 +155,12 @@ def write_brush_gcode(project_name,
         # translate line points to canvas origin in workspace
         stroke_line += np.asarray([canvas['x_left'], canvas['y_bottom']])
         
-        brush_palette_paint_map, \
+        palette_brush_map, \
         towel = ln2gcd.stroke_lines_to_paint_gcode(stroke_line,
                                                    tool_profile,
                                                    tool,
-                                                   paint,
-                                                   brush_palette_paint_map,
+                                                   paint_color,
+                                                   palette_brush_map,
                                                    brush_water,
                                                    towel,
                                                    gcode_file)
@@ -247,8 +248,8 @@ if __name__ == '__main__':
         machine_objects = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'stock_paints.txt'), 'r') as f:
-        stock_paints = json.load(f)
+    with open(os.path.join(DATA_PATH, 'pain_colors.txt'), 'r') as f:
+        paint_colors = json.load(f)
     f.close()
     
     with open(os.path.join(DATA_PATH, 'tools.txt'), 'r') as f:
@@ -271,16 +272,16 @@ if __name__ == '__main__':
         process_lines = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'palette_paint_map.txt'), 'r') as f:
-        palette_paint_map = json.load(f)
+    with open(os.path.join(DATA_PATH, 'palette_brush_map.txt'), 'r') as f:
+        palette_brush_map = json.load(f)
     f.close()
     
-    write_brush_gcode('jackie',
+    write_brush_gcode('Jackie',
                       machine_objects,
-                      stock_paints,
+                      paint_colors,
                       tools,
                       tool_profiles,
                       layers,
                       processes,
                       process_lines,
-                      palette_paint_map)
+                      palette_brush_map)

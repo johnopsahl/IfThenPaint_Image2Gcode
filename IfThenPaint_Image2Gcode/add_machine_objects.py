@@ -61,8 +61,9 @@ paint_dispenser = {'name': 'paint_dispenser',
                    'angle_btw_dispensers': 36,
                    'z_clearance': 8, # relative to top of paint palette
                    'b_clearance': 22, # so b-axis push plate clears syringe plungers
+                   'syringe_volume': 8, #syringe volume capacity
                    'dispense_mm_per_ml': 5.8, # mm of syringe movement to dispense one ml
-                   'dispense_feedrate': 50, # read from json to generate gcode, not this dict
+                   'dispense_feedrate': 50,
                    'b_probe_retract': 2,
                    'b_probe_feedrate': 1200}
 
