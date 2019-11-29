@@ -4,7 +4,7 @@ import datetime
 from definitions import DATA_PATH
 
 def write_paint_gcode(project_name,
-                      paint_palette_map,
+                      palette_paint_map,
                       machine_objects,
                       paints):
     # generates the gcode file used by the paint management system to 
@@ -68,7 +68,7 @@ def write_paint_gcode(project_name,
     go_to_water_z_clearance(paint_water, gcode_file)
     go_to_home(paint_management, gcode_file)
     
-    for paint_row in paint_palette_map:          
+    for paint_row in palette_paint_map:          
         
         paint_color_rgb = paint_row['paint_color_rgb']
         paint_name_list = [x['color_rgb'] for x in stock_paints]
@@ -116,36 +116,44 @@ def dispense_paint(paint_row,
                    gcode_file):
     # dispense paint on the palette
     
-    syringe_dispense = \
-    paint_row['b_dispense_ratio']*(paint_row['y_start'] - paint_row['y_end'])
+    y_increment = paint_row['y_increment']
+    y_end = paint_row['y_end']
+    y_current = paint_row['y_start']
     
     # raise to palette clearance height
     gcode_file.write('G00 Z%.4f\n' % (dispenser['z_clearance'] +
                                       palette['z_top']))
     # go to start of paint bead
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (paint_row['x_position'], paint_row['y_start']))
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (paint_row['x_row'], y_current))
+    
     # go to dispense height
-    gcode_file.write('G00 Z%.4f\n' % (paint_row['paint_bead_height'] + 
+    gcode_file.write('G00 Z%.4f\n' % (paint_row['bead_height'] + 
                                       palette['z_top']))
+    
     # probe for syringe plunger level, stop when probe switch is activated
     gcode_file.write('G38.3 B%.4f F%.4f\n' % (paint_management['b_max_travel'],
                                               dispenser['b_probe_feedrate']))
     
     # change to relative coordinates
     gcode_file.write('G91\n')
-    # dispense a little paint prior to perforing dispensing operation
-    # to account for initial resistance of paint through syringe
-    gcode_file.write('G01 B%.4f F%.4f\n' % (paint_row['b_initial_dispense'], 
-                                            paint_row['dispense_feedrate']))
-    # pause for 1 second
-    gcode_file.write('G04 P%.4f\n' % 2)
-    # dispense bead of paint
-    gcode_file.write('G01 Y%.4f B%.4f F%.4f\n' % (paint_row['y_end'] - paint_row['y_start'], 
-                                                  syringe_dispense,
-                                                  paint_row['dispense_feedrate']))
+    
+    while y_current >= y_end:
+        
+        # dispense paint
+        gcode_file.write('G01 B%.4f F%.4f\n' % (paint_row['plunger_dist'], 
+                                                paint_row['dispense_feedrate']))
+        # pause for paint response
+        gcode_file.write('G04 P%.4f\n' % 2)
+        
+        # move to next paint bead
+        gcode_file.write('G00 X%.4f Y%.4f\n' % (paint_row['x_row'], y_current))
+        
+        y_current -= y_increment
+        
     # raise push plate limit off of syringe plunger so it is no longer activated
     gcode_file.write('G00 B%.4f\n' % -dispenser['b_probe_retract'])
-    # return to absolute coordinates
+    
+    # change back to absolute coordinates
     gcode_file.write('G90\n')
     
     # raise to palette clearance height
@@ -190,7 +198,7 @@ def palette_to_workspace(paint_management, gcode_file):
 if __name__ == '__main__':
     
     with open(os.path.join(DATA_PATH, 'palette_paint_map.txt'), 'r') as f:
-        paint_palette_map = json.load(f)
+        palette_paint_map = json.load(f)
     f.close()
     
 #    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'r') as f:
@@ -206,6 +214,6 @@ if __name__ == '__main__':
     f.close()
     
     write_paint_gcode('jackie',
-                      paint_palette_map,
+                      palette_paint_map,
                       machine_objects,
                       stock_paints)
