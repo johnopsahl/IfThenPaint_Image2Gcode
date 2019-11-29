@@ -6,7 +6,8 @@ from definitions import DATA_PATH
 
 def layer_paint_distance(layers,
                          processes,
-                         process_lines):
+                         process_lines,
+                         tool_profiles):
     # generates a list of how far the tool travels on the canvas for each layer
     
     paint_distance = []
@@ -17,14 +18,20 @@ def layer_paint_distance(layers,
         process_name_list = [x['name'] for x in processes]
         process_index = process_name_list.index(process_name)
         
-        paint_color_rgb = layer['paint_color_rgb']
         tool_profile_name = layer['tool_profile_name']
+        tool_profile_name_list = [x['name'] for x in tool_profiles]
+        tool_profile_index = tool_profile_name_list.index(tool_profile_name)
+        tool_profile = tool_profiles[tool_profile_index]
         
+        paint_color_rgb = layer['paint_color_rgb']
+
         distance_on_canvas = canvas_paint_distance(process_lines[process_index])
+        paint_dips = np.ceil(distance_on_canvas/tool_profile['paint_dist_max'])
         
         paint_distance.append({'paint_color_rgb': paint_color_rgb,
                                'tool_profile_name': tool_profile_name,
-                               'paint_distance': distance_on_canvas})
+                               'paint_distance': distance_on_canvas,
+                               'paint_dips': paint_dips})
     
     return paint_distance
 
@@ -55,9 +62,14 @@ if __name__ == '__main__':
         process_lines = json.load(f)
     f.close()
     
+    with open(os.path.join(DATA_PATH, 'tool_profiles.txt'), 'r') as f:
+        tool_profiles = json.load(f)
+    f.close()
+    
     paint_distance = layer_paint_distance(layers, 
                                           processes, 
-                                          process_lines)
+                                          process_lines,
+                                          tool_profiles)
     
     with open(os.path.join(DATA_PATH, 'layer_paint_distance.txt'), 'w') as f:
         json.dump(paint_distance, f, separators = (',', ':'), sort_keys = True, indent = 4)

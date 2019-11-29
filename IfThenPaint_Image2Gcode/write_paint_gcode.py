@@ -137,6 +137,8 @@ def dispense_paint(paint_row,
     # to account for initial resistance of paint through syringe
     gcode_file.write('G01 B%.4f F%.4f\n' % (paint_row['b_initial_dispense'], 
                                             paint_row['dispense_feedrate']))
+    # pause for 1 second
+    gcode_file.write('G04 P%.4f\n' % 2)
     # dispense bead of paint
     gcode_file.write('G01 Y%.4f B%.4f F%.4f\n' % (paint_row['y_end'] - paint_row['y_start'], 
                                                   syringe_dispense,

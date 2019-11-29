@@ -17,7 +17,7 @@ tool_profile_1 = {'name': '4_round_B0C0',
                   'z_canvas_paint': -68,
                   'paint_dist_max': 200,
                   'clean_dist_max': 3000,
-                  'paint_bead_length': 4,
+                  'paint_dispense_volume': 0.25, #ml
                   'z_paint_dip': -80,
                   'z_palette_retract': -66,
                   'feed_rate': 2500}
@@ -33,7 +33,7 @@ tool_profile_2 = {'name': '2_round_B0C0',
                   'z_canvas_paint': -68,
                   'paint_dist_max': 200,
                   'clean_dist_max': 3000,
-                  'paint_bead_length': 4,
+                  'paint_dispense_volume': 0.25, #ml
                   'z_paint_dip': -80,
                   'z_palette_retract': -66,
                   'feed_rate': 2500}

@@ -46,7 +46,7 @@ def auto_select_paint(process_name):
     
     process_scan_color_bgr = processes[process_index]['scan_color_bgr']
     
-    with open(os.path.join(DATA_PATH, 'stock_paints.txt'), 'r') as f:
+    with open(os.path.join(DATA_PATH, 'paint_colors.txt'), 'r') as f:
         stock_paints = json.load(f)
     f.close()
     
