@@ -93,6 +93,7 @@ def map_palette(layer_paint_dips,
                 palette_brush_map.append({'paint_color_rgb': paint_color_rgb,
                                           'tool_profile_name': tool_profile_name,
                                           'bead_group_x_span': bead_group_x_span,
+                                          'max_bead_height': max_bead_height,
                                           'y_increment': y_increment,
                                           'x_row': x_current + bead_group_x_span/2,
                                           'y_start': y_start - y_increment, # advance by y_increment for first bead scrap

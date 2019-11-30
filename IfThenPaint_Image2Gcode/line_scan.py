@@ -17,8 +17,8 @@ from definitions import DATA_PATH
 
 # the parameters used by the line scan function to generate paint strokes from
 # a digital image by paint color
-scan_1 = {'name': 'process_1',
-          'scan_color_bgr': [42, 42, 42],
+scan_1 = {'name': 'process_2',
+          'scan_color_bgr': [158, 158, 158],
           'scan_angle_start': 0,
           'scan_angle_increment': 90,
           'scan_angle_end': 180,

@@ -79,5 +79,5 @@ def match_paint_color_to_image_color(image_color_bgr, paint_colors_rgb):
 if __name__ == '__main__':
 
     #layer name, process name, tool profile name
-    add_layer('layer_1', 'process_1', '2_round_B0C0')
+    add_layer('layer_2', 'process_2', '2_round_B0C0')
     

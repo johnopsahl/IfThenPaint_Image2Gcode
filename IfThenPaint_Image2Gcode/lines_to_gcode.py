@@ -234,6 +234,7 @@ def palette_paint_dip(number_of_dips,
     # go to paint bead dip location
     gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, y_start))
     
+    # paint dip operation
     for i in range(number_of_dips):
         # dip brush into paint
         gcode_file.write('G00 Z%.4f\n' % tool_profile['z_paint_dip'])
