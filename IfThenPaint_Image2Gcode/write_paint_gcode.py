@@ -141,7 +141,7 @@ def dispense_paint(paint_row,
         
         # dispense paint
         gcode_file.write('G01 B%.4f F%.4f\n' % (paint_row['plunger_dist'], 
-                                                paint_row['dispense_feedrate']))
+                                                dispenser['dispense_feedrate']))
         # pause for paint response
         gcode_file.write('G04 P%.4f\n' % 2)
         

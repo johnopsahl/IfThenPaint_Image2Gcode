@@ -55,19 +55,19 @@ def stroke_lines_to_paint_gcode(line,
                 water_dip(3, water, tool, gcode_file)
                 towel = towel_wipe(2, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
-                brush_palette_paint_map = palette_paint_dip(2, 
-                                                            palette_brush_map,
-                                                            paint_color, 
-                                                            tool_profile, 
-                                                            gcode_file)
+                palette_brush_map = palette_paint_dip(2, 
+                                                      palette_brush_map,
+                                                      paint_color, 
+                                                      tool_profile, 
+                                                      gcode_file)
                 paint_dist = tool_profile['paint_dist_max']
                 
             if paint_dist == 0:  # when paint brush runs out of paint, dip in paint
-                brush_palette_paint_map = palette_paint_dip(2, 
-                                                            palette_brush_map,
-                                                            paint_color,
-                                                            tool_profile, 
-                                                            gcode_file)
+                palette_brush_map = palette_paint_dip(2, 
+                                                      palette_brush_map,
+                                                      paint_color,
+                                                      tool_profile, 
+                                                      gcode_file)
                 paint_dist = tool_profile['paint_dist_max']
                 
             # if it is the first move of the stroke line and the tool doesn't have infinite c axial symmetry
@@ -131,7 +131,7 @@ def stroke_lines_to_paint_gcode(line,
     
             paint_move_count += 1
         
-    return brush_palette_paint_map, towel
+    return palette_brush_map, towel
     
 def water_dip(number_of_swirls, water, tool, gcode_file):
     # clean brush during painting to re-wet brush or between colors
@@ -213,6 +213,8 @@ def palette_paint_dip(number_of_dips,
     # paint dip operation
     paint_color_rgb = paint_color['color_rgb']
     tool_profile_name = tool_profile['name']
+    
+    bead_row_index = 0
     for i in range(len(palette_brush_map)):
         if (palette_brush_map[i]['paint_color_rgb'] == paint_color_rgb and 
             palette_brush_map[i]['tool_profile_name'] == tool_profile_name):
@@ -220,7 +222,7 @@ def palette_paint_dip(number_of_dips,
             break
         
     bead_row = palette_brush_map[bead_row_index]
-    
+
     y_increment = bead_row['y_increment']
     x_position = bead_row['x_row']
     y_start = bead_row['y_start']
@@ -242,7 +244,7 @@ def palette_paint_dip(number_of_dips,
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
     
     # check if enough paint bead length for next paint dip, delete from map if not
-    if abs(y_end - y_start) - y_increment >= y_increment:
+    if abs(y_end - y_start) - y_increment >= 0:
         bead_row['y_start'] -= y_increment
     else:
         del palette_brush_map[bead_row_index]

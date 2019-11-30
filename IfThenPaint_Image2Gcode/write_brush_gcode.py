@@ -248,7 +248,7 @@ if __name__ == '__main__':
         machine_objects = json.load(f)
     f.close()
     
-    with open(os.path.join(DATA_PATH, 'pain_colors.txt'), 'r') as f:
+    with open(os.path.join(DATA_PATH, 'paint_colors.txt'), 'r') as f:
         paint_colors = json.load(f)
     f.close()
     

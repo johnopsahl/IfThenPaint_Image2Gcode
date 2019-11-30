@@ -47,14 +47,14 @@ def map_palette(layer_paint_dips,
         # determine largest volume percentage of any one stock paint 
         # of the paint color composition
         paint_percent_list = [x[1] for x in paint_color['paint_color_comp']]
-        max_paint_percent = paint_percent_list.index(max(paint_percent_list))
+        max_paint_percent = max(paint_percent_list)
         
         # calculate max bead height and max bead width
         max_bead_height, max_bead_diameter = paint_bead_dimensions(max_paint_percent*paint_dip_volume)
         
         # use widest of the paint width, profile width, and profile length
         bead_clearance_diameter = max(max_bead_diameter, profile_width, profile_length)
-        y_increment = bead_clearance_diameter
+        y_increment = 2*bead_clearance_diameter
         
         # calculate span of paint bead stack up for each layer
         bead_group_x_span =  0
@@ -68,7 +68,7 @@ def map_palette(layer_paint_dips,
         # detemine paints to be dispensed in order of decreasing volume;
         # so syringe nozzles will not collide with paint that has already been
         # dispensed
-        paint_percent_index = np.argsort(np.array(paint_percent_list))
+        paint_percent_index = np.argsort(-np.array(paint_percent_list))
         
         bead_count = layer['paint_dips']
         
@@ -79,7 +79,7 @@ def map_palette(layer_paint_dips,
             # less than palette_x_end and invalid dispense row has been 
             # written to the paint_palette_map, but is a sufficient 
             # way to stop the process and inform the user
-            if x_current < palette_x_end:
+            if x_current > palette_x_end:
                 
                 if bead_count >= max_beads_per_row:
                     beads_per_row = max_beads_per_row
@@ -93,7 +93,7 @@ def map_palette(layer_paint_dips,
                 palette_brush_map.append({'paint_color_rgb': paint_color_rgb,
                                           'tool_profile_name': tool_profile_name,
                                           'bead_group_x_span': bead_group_x_span,
-                                          'bead_y_increment': y_increment,
+                                          'y_increment': y_increment,
                                           'x_row': x_current + bead_group_x_span/2,
                                           'y_start': y_start - y_increment, # advance by y_increment for first bead scrap
                                           'y_end': y_end})
@@ -107,7 +107,7 @@ def map_palette(layer_paint_dips,
                     
                     # capture paint volume here so as to include scrap dispense
                     # at start of each row
-                    paint_volume = beads_per_row*paint_dip_volume
+                    paint_volume = beads_per_row*stock_paint_percent*paint_dip_volume
                     plunger_dist = stock_paint_percent*paint_dip_volume*dispenser['dispense_mm_per_ml']
                     
                     bead_height, bead_diameter = paint_bead_dimensions(stock_paint_percent*paint_dip_volume)
@@ -134,7 +134,7 @@ def map_palette(layer_paint_dips,
                 break
         
         # distance between paint color rows 
-        x_current -= bead_clearance_diameter/2
+        x_current -= 2*bead_clearance_diameter
 
     return palette_brush_map, palette_paint_map
 
