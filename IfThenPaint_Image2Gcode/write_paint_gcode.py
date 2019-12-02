@@ -143,7 +143,7 @@ def dispense_paint(paint_row,
         gcode_file.write('G01 B%.4f F%.4f\n' % (paint_row['plunger_dist'], 
                                                 dispenser['dispense_feedrate']))
         # pause for paint response
-        gcode_file.write('G04 P%.4f\n' % 2)
+        gcode_file.write('G04 P%.4f\n' % dispenser['dispense_delay'])
         
         # move to next paint bead
         gcode_file.write('G00 Y%.4f\n' % -y_increment)

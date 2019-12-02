@@ -2,7 +2,9 @@ import numpy as np
 import math
 
 def sequence_lines(stroke_lines, 
-                   std_image_width, std_image_height, section_side_length):
+                   image_pixel_width, 
+                   image_pixel_height, 
+                   section_side_length):
     # a next cloest line algorithm, used to optimize the order in which strokes
     # are painted to minimize the amount of time required to paint
     
@@ -13,8 +15,8 @@ def sequence_lines(stroke_lines,
     #initialize 2d sections_points array
     section_points = []
     
-    row_count = round(std_image_height/section_side_length)
-    column_count = round(std_image_width/section_side_length)
+    row_count = round(image_pixel_height/section_side_length)
+    column_count = round(image_pixel_width/section_side_length)
     
     for i in range(row_count):
         section_points.append([])

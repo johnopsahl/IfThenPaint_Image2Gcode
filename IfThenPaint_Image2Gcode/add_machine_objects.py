@@ -5,11 +5,17 @@ from definitions import DATA_PATH
 # all machine object parameters needed to develop the gcode machine instructions,
 # parameter values are specific to the If Then Paint proof-of-concept prototype machine
 
+image_properties = {'name': 'image_properties',
+                    'x_width': 120,
+                    'y_height': 160,
+                    'pixel_per_mm': 6.4,
+                    'grid_side_pixel_length': 64}
+
 canvas = {'name': 'canvas',
-          'x_left': 136,
-          'y_bottom': 103,
-          'x_length': 120,
-          'y_length': 160}
+          'x_min': 136,
+          'y_min': 103,
+          'x_width': 127,
+          'y_height': 177.8}
 
 brush_palette = {'name': 'brush_palette',
                  'x_min': 11,
@@ -63,11 +69,13 @@ paint_dispenser = {'name': 'paint_dispenser',
                    'b_clearance': 22, # so b-axis push plate clears syringe plungers
                    'syringe_volume': 8, #syringe volume capacity
                    'dispense_mm_per_ml': 5.8, # mm of syringe movement to dispense one ml
+                   'dispense_delay': 2,
                    'dispense_feedrate': 50,
                    'b_probe_retract': 2,
                    'b_probe_feedrate': 1200}
 
-machine_objects = [canvas,
+machine_objects = [image_properties,
+                   canvas,
                    brush_palette,
                    brush_water,
                    towel,

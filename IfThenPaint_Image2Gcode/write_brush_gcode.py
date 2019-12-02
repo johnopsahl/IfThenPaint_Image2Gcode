@@ -27,6 +27,7 @@ def write_brush_gcode(project_name,
     gcode_file.write('\n')
     
     machine_object_name_list = [x['name'] for x in machine_objects]
+    image_prop_index = machine_object_name_list.index('image_properties')
     canvas_index = machine_object_name_list.index('canvas')
     brush_palette_index = machine_object_name_list.index('brush_palette')
     brush_water_index = machine_object_name_list.index('brush_water')
@@ -34,6 +35,7 @@ def write_brush_gcode(project_name,
     tool_change_index = machine_object_name_list.index('tool_change')
     paint_palette_index = machine_object_name_list.index('paint_palette')
     
+    image_prop = machine_objects[image_prop_index]
     canvas = machine_objects[canvas_index]
     brush_palette = machine_objects[brush_palette_index]
     brush_water = machine_objects[brush_water_index]
@@ -52,6 +54,11 @@ def write_brush_gcode(project_name,
         paint_row['y_end'] += palette_y_offset
         
     # write object parameters to gcode file
+    gcode_file.write('(IMAGE PROPERTIES)\n')
+    for key in image_prop:
+        gcode_file.write('(' + str(key) + ' , ' + str(image_prop[key]) + ')\n')
+    gcode_file.write('\n')
+
     gcode_file.write('(CANVAS)\n')
     for key in canvas:
         gcode_file.write('(' + str(key) + ' , ' + str(canvas[key]) + ')\n')
@@ -152,8 +159,12 @@ def write_brush_gcode(project_name,
             
         stroke_line = np.asarray(process_line)
         
+        # center image within canvas; assumes image is smaller than canvas
+        canvas_x_min = canvas['x_min'] + (canvas['x_width'] - image_prop['x_width'])/2
+        canvas_y_min = canvas['y_min'] + (canvas['y_height'] - image_prop['y_height'])/2
+        
         # translate line points to canvas origin in workspace
-        stroke_line += np.asarray([canvas['x_left'], canvas['y_bottom']])
+        stroke_line += np.asarray([canvas_x_min, canvas_y_min])
         
         palette_brush_map, \
         towel = ln2gcd.stroke_lines_to_paint_gcode(stroke_line,

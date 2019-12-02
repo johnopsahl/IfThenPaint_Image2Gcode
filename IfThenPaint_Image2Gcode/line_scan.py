@@ -24,10 +24,6 @@ scan_1 = {'name': 'process_2',
           'scan_angle_end': 180,
           'profile_width': 6,
           'profile_length': 6,
-          'image_width_std': 768,
-          'image_height_std': 1024,
-          'pixel_per_mm': 6.4,
-          'pixel_grid_side_length': 64,
           'color_match_threshold': 0.4,
           'scan_line_offset_overlap': 0.1,
           'scan_line_increment_overlap': 0.1,
@@ -43,10 +39,6 @@ scan_2 = {'name': 'line_scan_green',
           'scan_angle_end': 180,
           'profile_width': 3,
           'profile_length': 3,
-          'image_width_std': 768,
-          'image_height_std': 1024,
-          'pixel_per_mm': 6.4,
-          'pixel_grid_side_length': 64,
           'color_match_threshold': 0.4,
           'scan_line_offset_overlap': 0,
           'scan_line_increment_overlap': 0.1,
@@ -55,7 +47,7 @@ scan_2 = {'name': 'line_scan_green',
           'select_line_min_length': 0,
           'stroke_line_max_length': 150}
 
-def line_scan(scan, null_color):
+def line_scan(scan, image_prop, null_color):
     # generates paint stroke lines from a bitmap image by paint color
     
     image_quant = cv2.imread(os.path.join(DATA_PATH, 'image_quant.png'))
@@ -64,10 +56,10 @@ def line_scan(scan, null_color):
     scan_color = np.asarray(scan['scan_color_bgr'])
     
     # convert length values to pixels
-    profile_width = scan['profile_width']*scan['pixel_per_mm']
-    profile_length = scan['profile_length']*scan['pixel_per_mm']
-    select_line_min_length = scan['select_line_min_length']*scan['pixel_per_mm']
-    stroke_line_max_length = scan['stroke_line_max_length']*scan['pixel_per_mm']
+    profile_width = scan['profile_width']*image_prop['pixel_per_mm']
+    profile_length = scan['profile_length']*image_prop['pixel_per_mm']
+    select_line_min_length = scan['select_line_min_length']*image_prop['pixel_per_mm']
+    stroke_line_max_length = scan['stroke_line_max_length']*image_prop['pixel_per_mm']
     
     line_found = True
     line_selected = True
@@ -161,9 +153,9 @@ def line_scan(scan, null_color):
         cv2.imwrite(os.path.join(DATA_PATH, 'image_eval_final.png'), image_eval)
         
         line_sequence = sqnlns.sequence_lines(line_select_all, 
-                                              scan['image_width_std'], 
-                                              scan['image_height_std'], 
-                                              scan['pixel_grid_side_length'])
+                                              image_prop['x_width']*image_prop['pixel_per_mm'], 
+                                              image_prop['y_height']*image_prop['pixel_per_mm'], 
+                                              image_prop['grid_side_pixel_length'])
         
         # If lines are less than the stroke line max length, split them into 
         # lines no longer than the stroke line max length.
@@ -179,7 +171,7 @@ def line_scan(scan, null_color):
                                                       stroke_line_max_length)
         
         # convert stroke line coordinates from pixels to mm
-        line_final = line_modified/scan['pixel_per_mm']
+        line_final = line_modified/image_prop['pixel_per_mm']
         
         # convert to list
         line_final = line_final.tolist()
@@ -194,13 +186,21 @@ if __name__ == '__main__':
     
     start_time = time.time()
     
+    with open(os.path.join(DATA_PATH, 'machine_objects.txt'), 'r') as f:
+        machine_objects = json.load(f)
+    f.close()
+    
+    machine_object_name_list = [x['name'] for x in machine_objects]
+    image_prop_index = machine_object_name_list.index('image_properties')
+    image_prop = machine_objects[image_prop_index]
+    
     with open(os.path.join(DATA_PATH, 'image_color_center_bgr.txt'), 'r') as f:
         image_color_center = json.load(f)
     f.close()
     
     null_color = imgproc.random_non_matching_color(image_color_center)
     
-    process_line = line_scan(scan, null_color)
+    process_line = line_scan(scan, image_prop, null_color)
     
     with open(os.path.join(DATA_PATH, 'process_temp.txt'), 'w') as f:
         json.dump(scan, f, separators = (',', ':'), sort_keys = True, indent = 4)
