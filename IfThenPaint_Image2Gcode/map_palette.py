@@ -41,8 +41,6 @@ def map_palette(layer_paint_dips,
         tool_profile_index = tool_profile_name_list.index(tool_profile_name)
         tool_profile = tool_profiles[tool_profile_index]
         paint_dip_volume = tool_profile['paint_dip_volume']
-        profile_width = tool_profile['profile_width']
-        profile_length = tool_profile['profile_length']
         
         # determine largest volume percentage of any one stock paint 
         # of the paint color composition
@@ -52,22 +50,18 @@ def map_palette(layer_paint_dips,
         # calculate max bead height and max bead width
         max_bead_height, max_bead_diameter = paint_bead_dimensions(max_paint_percent*paint_dip_volume)
         
-        # use widest of the paint width, profile width, and profile length
-        bead_clearance_diameter = max(max_bead_diameter, profile_width, profile_length)
-        y_increment = 2*bead_clearance_diameter
-        
         # calculate span of paint bead stack up for each layer
         bead_group_x_span =  0
         for paint_percent in paint_percent_list:
             bead_height, bead_diameter = paint_bead_dimensions(paint_percent*paint_dip_volume)
             bead_group_x_span += bead_diameter
-    
-        # calculate number of paint beads per y row
-        max_beads_per_row = np.floor(palette_y_dist/bead_clearance_diameter)
+            
+        y_increment = 1.25*bead_group_x_span
         
-        # detemine paints to be dispensed in order of decreasing volume;
-        # so syringe nozzles will not collide with paint that has already been
-        # dispensed
+        # calculate number of paint beads per y row
+        max_beads_per_row = np.floor(palette_y_dist/y_increment)
+        
+        #paints to be dispensed in order of increasing volume
         paint_percent_index = np.argsort(-np.array(paint_percent_list))
         
         bead_count = layer['paint_dips']
@@ -135,7 +129,7 @@ def map_palette(layer_paint_dips,
                 break
         
         # distance between paint color rows 
-        x_current -= 2*bead_clearance_diameter
+        x_current -= 0.25*bead_group_x_span
 
     return palette_brush_map, palette_paint_map
 

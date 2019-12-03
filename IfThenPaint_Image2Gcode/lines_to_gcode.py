@@ -227,12 +227,17 @@ def palette_paint_dip(number_of_dips,
     x_position = bead_row['x_row']
     y_start = bead_row['y_start']
     y_end = bead_row['y_end']
-
+    
     # Z axis to canvas retract height
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
 
-    # go to paint bead dip location
+    # go to first paint dip location
     gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, y_start))
+    
+    #!!!!!!!!!!!!!!!!
+    # write paint mixing motion to be a small cirular motion, then large cirular 
+    # motion, then sweep back and forth
+    # consider more than one paint dip per paint mix
     
     # paint dip operation
     for i in range(number_of_dips):
