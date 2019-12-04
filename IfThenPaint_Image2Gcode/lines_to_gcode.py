@@ -98,10 +98,14 @@ def stroke_lines_to_paint_gcode(line,
                 draw_dist = 0
                 
                 gcode_file.write('G00 X%.4f Y%.4f F%i\n' 
-                                 % (x_current, y_current, tool_profile['feed_rate']))
-                gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_paint'])
+                                 % (x_current, 
+                                    y_current, 
+                                    tool_profile['unload_feed_rate']))
+                gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_unload'])
                 gcode_file.write('G01 X%.4f Y%.4f F%i\n' 
-                                 % (x_last, y_last, tool_profile['feed_rate']))
+                                 % (x_last, 
+                                    y_last, 
+                                    tool_profile['unload_feed_rate']))
                 gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
                 
                 x_current = x_last
@@ -117,10 +121,14 @@ def stroke_lines_to_paint_gcode(line,
                 y_next = paint_dist*math.sin(line_angle[i]) + y_current
                 
                 gcode_file.write('G00 X%.4f Y%.4f F%i\n' 
-                                 % (x_current, y_current, tool_profile['feed_rate']))
-                gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_paint'])
+                                 % (x_current, 
+                                    y_current, 
+                                    tool_profile['unload_feed_rate']))
+                gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_unload'])
                 gcode_file.write('G01 X%.4f Y%.4f F%i\n' 
-                                 % (x_next, y_next, tool_profile['feed_rate']))
+                                 % (x_next, 
+                                    y_next, 
+                                    tool_profile['unload_feed_rate']))
                 gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
                 # all paint on brush has been used
                 paint_dist = 0
@@ -227,24 +235,68 @@ def palette_paint_dip(number_of_dips,
     x_position = bead_row['x_row']
     y_start = bead_row['y_start']
     y_end = bead_row['y_end']
+    bead_group_length = bead_row['bead_group_length']
     
-    # Z axis to canvas retract height
+    mix_diameter_large = 0.75*bead_group_length
+    mix_diameter_small = 0.25*bead_group_length
+    
+    # Z axis to palette retract height
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
 
-    # go to first paint dip location
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, y_start))
+    # go to first paint mix location
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, 
+                                            y_start - mix_diameter_large/2))
     
-    #!!!!!!!!!!!!!!!!
-    # write paint mixing motion to be a small cirular motion, then large cirular 
-    # motion, then sweep back and forth
-    # consider more than one paint dip per paint mix
+    # dip brush into paint
+    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
+        
+    # mix paint in ccw circle    
+    for i in range(2):
+        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
+                         % (x_position, 
+                            y_start - mix_diameter_large/2,
+                            mix_diameter_large/2, 
+                            0, 
+                            tool_profile['load_feed_rate']))
+         
+    # Z axis to palette retract height
+    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
     
-    # paint dip operation
-    for i in range(number_of_dips):
-        # dip brush into paint
-        gcode_file.write('G00 Z%.4f\n' % tool_profile['z_paint_dip'])
-        # Z axis to canvas retract height
-        gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
+    # go to second paint mix location
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, 
+                                            y_start - mix_diameter_small/2))
+    
+    # dip brush into paint
+    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
+    
+    # mix paint in ccw circle
+    for i in range(2):    
+        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
+                         % (x_position, 
+                            y_start - mix_diameter_small/2,
+                            mix_diameter_small/2, 
+                            0, 
+                            tool_profile['load_feed_rate']))
+    
+    # Z axis to palette retract height
+    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
+    
+    # go to third paint mix location
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position + bead_group_length/2,
+                                            y_start))
+    # dip brush into paint
+    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
+    
+    # sweep brush in paint
+    for i in range(2):
+        # go to third paint mix location
+        gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_position - bead_group_length/2,
+                                                    y_start,
+                                                    tool_profile['load_feed_rate']))
+        
+        gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_position + bead_group_length/2,
+                                                    y_start,
+                                                    tool_profile['load_feed_rate']))
     
     # Z axis to canvas retract height
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
@@ -256,22 +308,6 @@ def palette_paint_dip(number_of_dips,
         del palette_brush_map[bead_row_index]
 
     return palette_brush_map
-        
-## paint dip operation for paint bins
-#def paint_dip(number_of_dips, paint, tool_profile, gcode_file):
-#        
-#    random_radius = np.random.random()*paint.dip_radius
-#    random_angle = np.random.random()*(2*math.pi)
-#
-#    x_temp = random_radius*math.cos(random_angle) + paint.x_center
-#    y_temp = random_radius*math.sin(random_angle) + paint.y_center
-#
-#    # dip brush in paint
-#    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_temp, y_temp))
-#
-#    for i in range(number_of_dips):
-#        gcode_file.write('G00 Z%.4f\n' % paint.z_dip)
-#        gcode_file.write('G00 Z%.4f\n' % tool_profile.z_canvas_retract)   
     
 def calc_fourth_axis_angle(path_angle, angle_current, tool_axial_symmetry):
     # calculate absolute brush angle to be perpendicular to G01 movement

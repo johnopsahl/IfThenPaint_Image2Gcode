@@ -145,8 +145,10 @@ def dispense_paint(paint_row,
         # pause for paint response
         gcode_file.write('G04 P%.4f\n' % dispenser['dispense_delay'])
         
-        # move to next paint bead
-        gcode_file.write('G00 Y%.4f\n' % -y_increment)
+        # if not the last dispense
+        if y_current - y_increment >= y_end:
+            # move to next paint bead
+            gcode_file.write('G00 Y%.4f\n' % -y_increment)
         
         y_current -= y_increment
         

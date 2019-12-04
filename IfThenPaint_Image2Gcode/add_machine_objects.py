@@ -56,7 +56,7 @@ paint_palette = {'name': 'paint_palette',
                  'y_min': 233,
                  'y_max': 333,
                  'y_margin': 10,
-                 'z_top': 22} 
+                 'z_top': 21} 
 
 paint_water = {'name': 'paint_water',
                'y_water': 36,

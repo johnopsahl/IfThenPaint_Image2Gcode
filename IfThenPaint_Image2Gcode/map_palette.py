@@ -51,18 +51,18 @@ def map_palette(layer_paint_dips,
         max_bead_height, max_bead_diameter = paint_bead_dimensions(max_paint_percent*paint_dip_volume)
         
         # calculate span of paint bead stack up for each layer
-        bead_group_x_span =  0
+        bead_group_length =  0
         for paint_percent in paint_percent_list:
             bead_height, bead_diameter = paint_bead_dimensions(paint_percent*paint_dip_volume)
-            bead_group_x_span += bead_diameter
+            bead_group_length += bead_diameter
             
-        y_increment = 1.25*bead_group_x_span
+        y_increment = 1.25*bead_group_length
         
         # calculate number of paint beads per y row
         max_beads_per_row = np.floor(palette_y_dist/y_increment)
         
         #paints to be dispensed in order of increasing volume
-        paint_percent_index = np.argsort(-np.array(paint_percent_list))
+        paint_percent_index = np.argsort(np.array(paint_percent_list))
         
         bead_count = layer['paint_dips']
         
@@ -86,10 +86,10 @@ def map_palette(layer_paint_dips,
                 
                 palette_brush_map.append({'paint_color_rgb': paint_color_rgb,
                                           'tool_profile_name': tool_profile_name,
-                                          'bead_group_x_span': bead_group_x_span,
+                                          'bead_group_length': bead_group_length,
                                           'max_bead_height': max_bead_height,
                                           'y_increment': y_increment,
-                                          'x_row': x_current - bead_group_x_span/2,
+                                          'x_row': x_current - bead_group_length/2,
                                           'y_start': y_start - y_increment, # advance by y_increment for first bead scrap
                                           'y_end': y_end})
                         
@@ -129,7 +129,7 @@ def map_palette(layer_paint_dips,
                 break
         
         # distance between paint color rows 
-        x_current -= 0.25*bead_group_x_span
+        x_current -= 0.25*bead_group_length
 
     return palette_brush_map, palette_paint_map
 
