@@ -237,7 +237,8 @@ def palette_paint_dip(number_of_dips,
     y_end = bead_row['y_end']
     bead_group_length = bead_row['bead_group_length']
     
-    mix_diameter_large = 0.75*bead_group_length
+    # consider setting mix diameter based on paint profile size
+    mix_diameter_large = 0.95*bead_group_length
     mix_diameter_small = 0.25*bead_group_length
     
     # Z axis to palette retract height
@@ -250,7 +251,7 @@ def palette_paint_dip(number_of_dips,
     # dip brush into paint
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
         
-    # mix paint in ccw circle    
+    # mix paint in large ccw circle    
     for i in range(2):
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (x_position, 
@@ -269,7 +270,7 @@ def palette_paint_dip(number_of_dips,
     # dip brush into paint
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
     
-    # mix paint in ccw circle
+    # mix paint in small ccw circle
     for i in range(2):    
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (x_position, 

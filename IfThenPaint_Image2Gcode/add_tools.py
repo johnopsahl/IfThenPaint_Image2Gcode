@@ -6,7 +6,7 @@ from definitions import DATA_PATH
 
 tool_1 = {'name': '4_round',
           'length': 10, # distance from tool chuck to end of tool; currently not used
-          'tip_length': 4, #operating length of tool measured from tip
+          'tip_length': 4, # length of tool measured from tip (i.e. bristle length)
           'x_dock': 48,
           'y_dock': 330,
           'z_B0C0_clearance': -55,
