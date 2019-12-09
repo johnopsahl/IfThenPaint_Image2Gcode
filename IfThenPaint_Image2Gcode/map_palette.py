@@ -142,12 +142,10 @@ def map_palette(layer_paint_dips,
     return palette_brush_map, palette_paint_map
 
 def paint_bead_dimensions(paint_volume):
+    # paint volume in ml
     
-    # convert ml to mm^3
-    paint_volume = paint_volume*1000
-    
-    bead_height = ((0.5*paint_volume)/(np.pi))**(1/3) # experimentally determined, based on volume of sphere
-    bead_diameter = 2*bead_height # assuming half sphere bead
+    bead_height = 33.333*paint_volume + 0.833
+    bead_diameter = 40*paint_volume + 4.8
         
     return bead_height, bead_diameter
     
