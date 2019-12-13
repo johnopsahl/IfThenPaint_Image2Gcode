@@ -238,8 +238,8 @@ def palette_paint_dip(number_of_dips,
     bead_group_length = bead_row['bead_group_length']
     
     # consider setting mix diameter based on paint profile size
-    mix_diameter_large = 0.95*bead_group_length
-    mix_diameter_small = 0.25*bead_group_length
+    mix_diameter_large = bead_group_length
+    mix_diameter_small = 0.5*bead_group_length
     
     # Z axis to palette retract height
     gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])

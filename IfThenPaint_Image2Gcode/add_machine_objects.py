@@ -53,7 +53,7 @@ paint_palette = {'name': 'paint_palette',
                  'x_min': 279,
                  'x_max': 379,
                  'x_margin': 10,
-                 'y_min': 233,
+                 'y_min': 133,
                  'y_max': 333,
                  'y_margin': 10,
                  'z_top': 21} 

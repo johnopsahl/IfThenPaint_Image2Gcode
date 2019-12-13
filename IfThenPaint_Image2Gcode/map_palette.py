@@ -129,6 +129,7 @@ def map_palette(layer_paint_dips,
                     x_current -= bead_diameter/2
                 
                 x_current -= max_profile_dim/2
+                
                 # subtract one to account for first bead of each row as scrap
                 bead_count -= beads_per_row - 1
             
