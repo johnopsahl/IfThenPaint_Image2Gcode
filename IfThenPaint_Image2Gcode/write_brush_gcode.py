@@ -159,9 +159,14 @@ def write_brush_gcode(project_name,
             
         stroke_line = np.asarray(process_line)
         
+        canvas_x_width = canvas['x_max'] - canvas['x_min']
+        canvas_y_height = canvas['y_max'] - canvas['y_min']
+        
         # center image within canvas; assumes image is smaller than canvas
-        canvas_x_min = canvas['x_min'] + (canvas['x_width'] - image_prop['x_width'])/2
-        canvas_y_min = canvas['y_min'] + (canvas['y_height'] - image_prop['y_height'])/2
+        canvas_x_min = canvas['x_min'] \
+                       + (canvas_x_width - image_prop['x_width'])/2
+        canvas_y_min = canvas['y_min'] \
+                       + (canvas_y_height - image_prop['y_height'])/2
         
         # translate line points to canvas origin in workspace
         stroke_line += np.asarray([canvas_x_min, canvas_y_min])
@@ -194,7 +199,8 @@ def go_to_home(gcode_file):
 
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
-    gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' % (0,0,0,0,0,0))
+    gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' 
+                     % (0, 0, 0, 0, 0, 0))
     
 def get_tool(tool, tool_change, gcode_file):
     # get the tool from it's dock

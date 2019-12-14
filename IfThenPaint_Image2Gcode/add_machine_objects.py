@@ -13,9 +13,9 @@ image_properties = {'name': 'image_properties',
 
 canvas = {'name': 'canvas',
           'x_min': 136,
+          'x_max': 263,
           'y_min': 103,
-          'x_width': 127,
-          'y_height': 177.8} # end of tool chuck when b axis at 0
+          'y_max': 280.8}
 
 brush_palette = {'name': 'brush_palette',
                  'x_min': 11,

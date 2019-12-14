@@ -184,13 +184,12 @@ def return_to_water(paint_water, gcode_file):
 def go_to_home(paint_management, gcode_file):
     # home X and Y, Z, and B axes (in that order) then set work coordinates
     
-    # pause so the machine can go into idle state
+    # short pause so the machine can go into idle state
     gcode_file.write('G04 P%.4f\n' % 0.5) 
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
-    gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' % (0,
-                                                                     paint_management['y_max_travel'],
-                                                                     0,0,0))
+    gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' 
+                     % (0, paint_management['y_max_travel'], 0, 0, 0))
     
 def palette_to_workspace(paint_management, gcode_file):
     # move palette to workspace
