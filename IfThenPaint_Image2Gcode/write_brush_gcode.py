@@ -168,10 +168,11 @@ def write_brush_gcode(project_name,
         
         palette_brush_map, \
         towel = ln2gcd.stroke_lines_to_paint_gcode(stroke_line,
+                                                   palette_brush_map,
                                                    tool_profile,
                                                    tool,
                                                    paint_color,
-                                                   palette_brush_map,
+                                                   brush_palette,
                                                    brush_water,
                                                    towel,
                                                    gcode_file)
@@ -199,7 +200,7 @@ def get_tool(tool, tool_change, gcode_file):
     # get the tool from it's dock
     
     # raise Z to clearnce height
-    gcode_file.write('G00 Z%.4f\n'% tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n'% tool['z_workspace_clearance'])
     # orient A and C axes
     gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'],
                                             tool_change['c_start']))
@@ -221,13 +222,13 @@ def get_tool(tool, tool_change, gcode_file):
     # soft set C axis to zero
     gcode_file.write('G10 L20 P1 C%.4f\n' % 0)
     # raise Z to clearnce height
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
 def dock_tool(tool, tool_change, gcode_file):
     # return the tool to it's dock
     
     # raise Z to clearnce height
-    gcode_file.write('G00 Z%.4f\n'% tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n'% tool['z_workspace_clearance'])
     # orient A and C axes
     gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'], 
                                             tool_change['c_start']))
@@ -251,7 +252,7 @@ def dock_tool(tool, tool_change, gcode_file):
     gcode_file.write('G10 L20 P1 C%.4f\n' % 0)
     
     # raise Z to clearnce height
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
 if __name__ == '__main__':
     

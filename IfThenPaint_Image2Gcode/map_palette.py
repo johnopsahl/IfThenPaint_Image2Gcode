@@ -55,7 +55,7 @@ def map_palette(layer_paint_dips,
         # calculate max bead height and max bead width
         max_bead_height, max_bead_diameter = paint_bead_dimensions(max_paint_percent*paint_dip_volume)
         
-        # calculate span of paint bead stack up for each layer
+        # calculate bead group length for the layer
         bead_group_length =  0
         for paint_percent in paint_percent_list:
             bead_height, bead_diameter = paint_bead_dimensions(paint_percent*paint_dip_volume)

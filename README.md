@@ -1,6 +1,8 @@
 # IfThenPaint_Image2Gcode
 Create cnc painting machine g-code from bitmap images.
 
+[If () Then {Paint} Project](https://hackaday.io/project/166524-if-then-paint)
+ 
 Script run sequence:
 1. size_image
 2. quantisize_image

@@ -3,10 +3,11 @@ import numpy as np
 import geometry as geom
                    
 def stroke_lines_to_paint_gcode(line, 
+                                palette_brush_map,
                                 tool_profile,
                                 tool,
-                                paint_color, 
-                                palette_brush_map, 
+                                paint_color,
+                                brush_palette, 
                                 water, 
                                 towel, 
                                 gcode_file):
@@ -29,7 +30,7 @@ def stroke_lines_to_paint_gcode(line,
     line_length = ((dy)**2 + (dx)**2)**0.5
     
     # Z axis to B0C0 clearance height
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
     for i in range(len(line)):
           
@@ -55,10 +56,12 @@ def stroke_lines_to_paint_gcode(line,
                 water_dip(3, water, tool, gcode_file)
                 towel = towel_wipe(2, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
-                palette_brush_map = palette_paint_dip(2, 
+                palette_brush_map = palette_paint_dip(2,
                                                       palette_brush_map,
                                                       paint_color, 
-                                                      tool_profile, 
+                                                      tool_profile,
+                                                      brush_palette,
+                                                      tool,
                                                       gcode_file)
                 paint_dist = tool_profile['paint_dist_max']
                 
@@ -66,7 +69,9 @@ def stroke_lines_to_paint_gcode(line,
                 palette_brush_map = palette_paint_dip(2, 
                                                       palette_brush_map,
                                                       paint_color,
-                                                      tool_profile, 
+                                                      tool_profile,
+                                                      brush_palette,
+                                                      tool,
                                                       gcode_file)
                 paint_dist = tool_profile['paint_dist_max']
                 
@@ -144,13 +149,15 @@ def stroke_lines_to_paint_gcode(line,
 def water_dip(number_of_swirls, water, tool, gcode_file):
     # clean brush during painting to re-wet brush or between colors
     
+    z_water_dip = water['z_bottom'] + tool['length'] - tool['tip_length']*tool['z_water_dip_percent']
+    
     # Z axis to B0C0 clearance height    
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     # move brush to water
     gcode_file.write('G00 X%.4f Y%.4f\n' 
                      % (water['x_center'] + water['dip_radius'], water['y_center']))
     # lower tool into water
-    gcode_file.write('G00 Z%.4f\n' % tool['z_water_dip'])
+    gcode_file.write('G00 Z%.4f\n' % z_water_dip)
     # dip brush in water in a ccw circle
     for i in range(number_of_swirls):
         
@@ -178,13 +185,15 @@ def water_dip(number_of_swirls, water, tool, gcode_file):
         
         
     # Z axis to B0C0 clearance height
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
 
 def towel_wipe(number_of_wipes, towel, tool, gcode_file):
     # wipe brush on towel in a ccw motion, the towel is a consumable object
     
+    z_towel_wipe = towel['z_top'] + tool['length'] - tool['tip_length']*tool['z_towel_wipe_percent']
+    
     # Z axis to B0C0 clearance height
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
            
     # wipe brush on towel in a ccw motion
     for j in range(number_of_wipes):
@@ -192,7 +201,7 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
         # go to towel
         gcode_file.write('G00 X%.4f Y%.4f\n' % (towel['x_current'], towel['y_center']))
         # lower tool to towel
-        gcode_file.write('G00 Z%.4f\n' % tool['z_towel_wipe'])
+        gcode_file.write('G00 Z%.4f\n' % z_towel_wipe)
         
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (towel['x_current'], 
@@ -205,14 +214,16 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
         towel['x_current'] -= towel['x_increment']
 
     # Z axis to B0C0 clearance height
-    gcode_file.write('G00 Z%.4f\n' % tool['z_B0C0_clearance'])
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
     return towel
 
-def palette_paint_dip(number_of_dips, 
-                      palette_brush_map, 
+def palette_paint_dip(number_of_dips,
+                      palette_brush_map,
                       paint_color, 
-                      tool_profile, 
+                      tool_profile,
+                      brush_palette,
+                      tool,
                       gcode_file):
     # load tool with paint, paint is a consumable object
     
@@ -236,57 +247,71 @@ def palette_paint_dip(number_of_dips,
     y_start = bead_row['y_start']
     y_end = bead_row['y_end']
     bead_group_length = bead_row['bead_group_length']
+    max_bead_height = bead_row['max_bead_height']
+    
+    z_palette_load = brush_palette['z_top'] \
+                     + max_bead_height \
+                     + tool['length'] \
+                     - tool['tip_length']*tool_profile['z_palette_load_percent']
+    
+    z_palette_retract = brush_palette['z_top'] \
+                        + max_bead_height \
+                        + tool['length']
+    
+    # z retract height to use when transitioning between palette and canvas
+    z_palette_canvas_retract = max(z_palette_retract, 
+                                   tool_profile['z_canvas_retract'])
     
     # consider setting mix diameter based on paint profile size
     mix_diameter_large = bead_group_length
     mix_diameter_small = 0.5*bead_group_length
     
     # Z axis to palette retract height
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_canvas_retract)
 
     # go to first paint mix location
     gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, 
-                                            y_start - mix_diameter_large/2))
+                                            y_start + mix_diameter_large/2))
     
     # dip brush into paint
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
         
     # mix paint in large ccw circle    
     for i in range(2):
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (x_position, 
-                            y_start - mix_diameter_large/2,
+                            y_start + mix_diameter_large/2,
                             mix_diameter_large/2, 
                             0, 
                             tool_profile['load_feed_rate']))
          
     # Z axis to palette retract height
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
     
     # go to second paint mix location
     gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, 
-                                            y_start - mix_diameter_small/2))
+                                            y_start + mix_diameter_small/2))
     
     # dip brush into paint
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
     
     # mix paint in small ccw circle
     for i in range(2):    
         gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
                          % (x_position, 
-                            y_start - mix_diameter_small/2,
+                            y_start + mix_diameter_small/2,
                             mix_diameter_small/2, 
                             0, 
                             tool_profile['load_feed_rate']))
     
     # Z axis to palette retract height
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_retract'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
     
     # go to third paint mix location
     gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position + bead_group_length/2,
                                             y_start))
     # dip brush into paint
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_palette_load'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
     
     # sweep brush in paint
     for i in range(2):
@@ -300,7 +325,7 @@ def palette_paint_dip(number_of_dips,
                                                     tool_profile['load_feed_rate']))
     
     # Z axis to canvas retract height
-    gcode_file.write('G00 Z%.4f\n' % tool_profile['z_canvas_retract'])
+    gcode_file.write('G00 Z%.4f\n' % z_palette_canvas_retract)
     
     # check if enough paint bead length for next paint dip, delete from map if not
     if abs(y_end - y_start) - y_increment >= 0:
