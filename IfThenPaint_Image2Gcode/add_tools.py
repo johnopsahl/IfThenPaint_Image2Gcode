@@ -5,22 +5,22 @@ from definitions import DATA_PATH
 # define all tools available to the machine
 
 tool_1 = {'name': '4_round',
-          'length': 10, # distance from tool chuck to end of tool; currently not used
-          'tip_length': 4, # length of tool measured from tip (i.e. bristle length); currently not used
+          'length': 62.5, # distance from tool chuck end to end of tool tip
+          'tip_length': 14, # length of tool measured from tip (i.e. bristle length)
           'x_dock': 48,
           'y_dock': 330,
           'z_workspace_clearance': -55,
-          'z_water_dip_percent': 0.85, # percent of tip_length to extend beyond water z_bottom
-          'z_towel_wipe_percent': 0.85} # percent of tip_length to extend beyond towel z_top
+          'z_water_dip_percent': 0.60, # percent of tip_length to extend beyond water z_bottom
+          'z_towel_wipe_percent': 0.60} # percent of tip_length to extend beyond towel z_top
 
 tool_2 = {'name': '2_round',
-          'length' : 10,
-          'tip_length': 4,
+          'length' : 62 + 3.2, # 3.2mm is chuck length add
+          'tip_length': 16,
           'x_dock': 113,
           'y_dock': 330,
           'z_workspace_clearance': -55,
-          'z_water_dip_percent': 0.85,
-          'z_towel_wipe_percent': 0.85}
+          'z_water_dip_percent': 0.60,
+          'z_towel_wipe_percent': 0.60}
 
 tool_3 = {'name': 'none_1',
           'length' : 10,

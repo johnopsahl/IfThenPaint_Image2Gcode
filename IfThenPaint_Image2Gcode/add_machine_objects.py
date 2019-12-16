@@ -15,19 +15,20 @@ canvas = {'name': 'canvas',
           'x_min': 136,
           'x_max': 263,
           'y_min': 103,
-          'y_max': 280.8}
+          'y_max': 280.8,
+          'z_top': -128}
 
 brush_palette = {'name': 'brush_palette',
-                 'x_min': 11,
-                 'x_max': 111,
-                 'y_min': 92,
-                 'y_max': 292,
-                 'z_top': 0} # end of tool chuck at top of palette when b axis at 0
+                 'x_min': 10,
+                 'x_max': 110,
+                 'y_min': 88,
+                 'y_max': 288,
+                 'z_top': -138.75} # end of tool chuck at top of palette when b axis at 0
     
 brush_water = {'name': 'brush_water',
                'x_center': 244,
                'y_center': 39,
-               'z_bottom': 0, # end of tool chuck at brush water bottom when b axis at 0
+               'z_bottom': -131 - 66.6 + 8.6, # end of tool chuck at brush water bottom when b axis at 0
                'dip_radius': 17,
                'feed_rate': 2500}
 
@@ -36,7 +37,7 @@ towel = {'name': 'towel',
          'x_increment': 7.5,
          'x_end': 35,
          'y_center': 30,
-         'z_top': 0, # end of tool chuck at top of towel when b axis is 0
+         'z_top': -129.5, # end of tool chuck at top of towel when b axis is 0
          'wipe_radius': 15,
          'feed_rate': 2500}
 
@@ -53,13 +54,13 @@ paint_management = {'name': 'paint_management',
                     'x_workspace': 7} #x distance to position palette within workspace
 
 paint_palette = {'name': 'paint_palette',
-                 'x_min': 279,
-                 'x_max': 379,
+                 'x_min': 280,
+                 'x_max': 380,
                  'x_margin': 10,
-                 'y_min': 133,
-                 'y_max': 333,
+                 'y_min': 137,
+                 'y_max': 337,
                  'y_margin': 10,
-                 'z_top': 21} # location at which dispener contacts palettte
+                 'z_top': 22} # location at which dispener contacts palettte
 
 paint_water = {'name': 'paint_water',
                'y_water': 36,
