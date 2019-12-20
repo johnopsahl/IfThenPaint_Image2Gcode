@@ -136,9 +136,6 @@ def map_palette(layer_paint_dips,
             else:
                 print('Too much paint, not enough palette, palette x dimension exceeded!!')
                 break
-        
-        # distance between paint color rows 
-        x_current -= 0.25*bead_group_length
 
     return palette_brush_map, palette_paint_map
 

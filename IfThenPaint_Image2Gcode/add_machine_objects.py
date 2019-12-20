@@ -14,15 +14,15 @@ image_properties = {'name': 'image_properties',
 canvas = {'name': 'canvas',
           'x_min': 136,
           'x_max': 263,
-          'y_min': 103,
-          'y_max': 280.8,
+          'y_min': 99.5,
+          'y_max': 277.3,
           'z_top': -128}
 
 brush_palette = {'name': 'brush_palette',
-                 'x_min': 10,
-                 'x_max': 110,
-                 'y_min': 88,
-                 'y_max': 288,
+                 'x_min': 9.5,
+                 'x_max': 109.5,
+                 'y_min': 86.5,
+                 'y_max': 286.5,
                  'z_top': -138.75} # end of tool chuck at top of palette when b axis at 0
     
 brush_water = {'name': 'brush_water',
@@ -36,7 +36,7 @@ towel = {'name': 'towel',
          'x_current': 185, # initialize as x start
          'x_increment': 7.5,
          'x_end': 35,
-         'y_center': 30,
+         'y_center': 25,
          'z_top': -129.5, # end of tool chuck at top of towel when b axis is 0
          'wipe_radius': 15,
          'feed_rate': 2500}
@@ -51,14 +51,14 @@ tool_change = {'name': 'tool_change',
 paint_management = {'name': 'paint_management',
                     'y_max_travel': 336,
                     'b_max_travel': 90,
-                    'x_workspace': 7} #x distance to position palette within workspace
+                    'x_workspace': 8} #x distance to position palette within workspace
 
 paint_palette = {'name': 'paint_palette',
-                 'x_min': 280,
-                 'x_max': 380,
+                 'x_min': 276,
+                 'x_max': 376,
                  'x_margin': 10,
-                 'y_min': 137,
-                 'y_max': 337,
+                 'y_min': 134.5,
+                 'y_max': 334.5,
                  'y_margin': 10,
                  'z_top': 22} # location at which dispener contacts palettte
 

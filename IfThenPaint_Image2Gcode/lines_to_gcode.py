@@ -52,8 +52,6 @@ def stroke_lines_to_paint_gcode(line,
         x_last = x_end[i]
         y_last = y_end[i]
         
-
-        
         # indicates which move count it is on during processing of a single stroke line
         # multiple moves are needed if brush runs out of paint, brush needs to be cleaned, etc
         paint_move_count = 0
@@ -66,7 +64,6 @@ def stroke_lines_to_paint_gcode(line,
                 towel = towel_wipe(2, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
                 palette_brush_map = palette_paint_dip(palette_brush_map,
-                                                      z_canvas_retract,
                                                       paint_color, 
                                                       tool_profile,
                                                       brush_palette,
@@ -76,7 +73,6 @@ def stroke_lines_to_paint_gcode(line,
                 
             if paint_dist == 0:  # when paint brush runs out of paint, dip in paint
                 palette_brush_map = palette_paint_dip(palette_brush_map,
-                                                      z_canvas_retract,
                                                       paint_color,
                                                       tool_profile,
                                                       brush_palette,
@@ -234,7 +230,6 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
     return towel
 
 def palette_paint_dip(palette_brush_map,
-                      z_canvas_retract,
                       paint_color, 
                       tool_profile,
                       brush_palette,
@@ -277,56 +272,11 @@ def palette_paint_dip(palette_brush_map,
                         + max_bead_height \
                         + tool['length']
     
-    # z retract height to use when transitioning between palette and canvas
-    z_palette_canvas_retract = max(z_palette_retract, z_canvas_retract)
-    
-    # consider setting mix diameter based on paint profile size
-    mix_radius_large = bead_group_length/2
-    mix_radius_small = 0.5*bead_group_length/2
-    
     # Z axis to palette retract height
-    gcode_file.write('G00 Z%.4f\n' % z_palette_canvas_retract)
-
-#    # go to first paint mix location
-#    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, 
-#                                            y_start + mix_radius_large))
-#    
-#    # dip brush into paint
-#    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
-#        
-#    # mix paint in large ccw circle    
-#    for i in range(2):
-#        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
-#                         % (x_position, 
-#                            y_start + mix_radius_large,
-#                            0, 
-#                            -mix_radius_large, 
-#                            tool_profile['load_feed_rate']))
-#         
-#    # Z axis to palette retract height
-#    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
-#    
-#    # go to second paint mix location
-#    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, 
-#                                            y_start + mix_radius_small))
-#    
-#    # dip brush into paint
-#    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
-#    
-#    # mix paint in small ccw circle
-#    for i in range(2):    
-#        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
-#                         % (x_position, 
-#                            y_start + mix_radius_small,
-#                            0, 
-#                            - mix_radius_small, 
-#                            tool_profile['load_feed_rate']))
-#    
-#    # Z axis to palette retract height
-#    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
     # go to third paint mix location
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position + bead_group_length/2 + max_profile_dim/2,
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position + bead_group_length/2,
                                             y_start))
     # dip brush into paint
     gcode_file.write('G00 Z%.4f\n' % z_palette_load)
@@ -335,26 +285,17 @@ def palette_paint_dip(palette_brush_map,
     for i in range(8):
         # go to third paint mix location
         gcode_file.write('G01 X%.4f Y%.4f F%i\n' 
-                         % (x_position - bead_group_length/2 - max_profile_dim/2,
+                         % (x_position - bead_group_length/2,
                             y_start,
                             tool_profile['load_feed_rate']))
         
         gcode_file.write('G01 X%.4f Y%.4f F%i\n' 
-                         % (x_position + bead_group_length/2 + max_profile_dim/2,
+                         % (x_position + bead_group_length/2,
                             y_start,
                             tool_profile['load_feed_rate']))
     
     # Z axis to canvas retract height
-    gcode_file.write('G00 Z%.4f\n' % z_palette_canvas_retract)
-    
-#    # go to third paint mix location
-#    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position,
-#                                            y_start))
-#    # dip brush into paint
-#    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
-#    
-#    # Z axis to canvas retract height
-#    gcode_file.write('G00 Z%.4f\n' % z_palette_canvas_retract)
+    gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
 
     # check if enough paint bead length for next paint dip, delete from map if not
     if abs(y_end - y_start) - y_increment >= 0:
