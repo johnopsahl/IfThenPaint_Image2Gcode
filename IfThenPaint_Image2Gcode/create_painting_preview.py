@@ -7,6 +7,7 @@ import geometry as geom
 from definitions import DATA_PATH
 
 def create_painting_preview(layers,
+                            image_prop,
                             processes,
                             process_lines,
                             tool_profiles):
@@ -24,8 +25,6 @@ def create_painting_preview(layers,
         process_name = layer['process_name']
         process_name_list = [x['name'] for x in processes]
         process_index = process_name_list.index(process_name)
-        process = processes[process_index]
-        pixel_per_mm = process['pixel_per_mm']
         
         paint_color_rgb = layer['paint_color_rgb']
         
@@ -33,10 +32,10 @@ def create_painting_preview(layers,
         tool_profile_name_list = [x['name'] for x in tool_profiles]
         tool_profile_index = tool_profile_name_list.index(tool_profile_name)
         tool_profile = tool_profiles[tool_profile_index]
-        pixel_profile_width = tool_profile['profile_width']*pixel_per_mm
-        pixel_profile_length = tool_profile['profile_length']*pixel_per_mm
+        pixel_profile_width = tool_profile['profile_width']*image_prop['pixel_per_mm']
+        pixel_profile_length = tool_profile['profile_length']*image_prop['pixel_per_mm']
         
-        line = np.asarray(process_lines[process_index])*pixel_per_mm
+        line = np.asarray(process_lines[process_index])*image_prop['pixel_per_mm']
         
         image_canvas = add_lines_to_canvas(image_canvas,
                                            line, 
@@ -71,6 +70,10 @@ if __name__ == '__main__':
         layers = json.load(f)
     f.close()
     
+    with open(os.path.join(DATA_PATH, 'image_properties.txt'), 'r') as f:
+        image_prop = json.load(f)
+    f.close()
+    
     with open(os.path.join(DATA_PATH, 'processes.txt'), 'r') as f:
         processes = json.load(f)
     f.close()
@@ -84,6 +87,7 @@ if __name__ == '__main__':
     f.close()
     
     create_painting_preview(layers,
+                            image_prop,
                             processes,
                             process_lines,
                             tool_profiles)

@@ -18,7 +18,7 @@ from definitions import DATA_PATH
 # the parameters used by the line scan function to generate paint strokes from
 # a digital image by paint color
 scan_1 = {'name': 'process_2',
-          'scan_color_bgr': [158, 158, 158],
+          'scan_color_bgr': [159, 159, 159],
           'scan_angle_start': 0,
           'scan_angle_increment': 90,
           'scan_angle_end': 180,
@@ -30,7 +30,7 @@ scan_1 = {'name': 'process_2',
           'select_line_width_overlap': 0.001,
           'select_line_length_overlap': 0,
           'select_line_min_length': 0,
-          'stroke_line_max_length': 10}
+          'stroke_line_max_length': 999}
 
 scan_2 = {'name': 'line_scan_green',
           'scan_color_bgr': [23, 41, 35],
@@ -45,7 +45,7 @@ scan_2 = {'name': 'line_scan_green',
           'select_line_width_overlap': 0.001,
           'select_line_length_overlap': 0,
           'select_line_min_length': 0,
-          'stroke_line_max_length': 150}
+          'stroke_line_max_length': 999}
 
 def line_scan(scan, image_prop, null_color):
     # generates paint stroke lines from a bitmap image by paint color
@@ -186,13 +186,9 @@ if __name__ == '__main__':
     
     start_time = time.time()
     
-    with open(os.path.join(DATA_PATH, 'machine_objects.txt'), 'r') as f:
-        machine_objects = json.load(f)
+    with open(os.path.join(DATA_PATH, 'image_properties.txt'), 'r') as f:
+        image_prop = json.load(f)
     f.close()
-    
-    machine_object_name_list = [x['name'] for x in machine_objects]
-    image_prop_index = machine_object_name_list.index('image_properties')
-    image_prop = machine_objects[image_prop_index]
     
     with open(os.path.join(DATA_PATH, 'image_color_center_bgr.txt'), 'r') as f:
         image_color_center = json.load(f)

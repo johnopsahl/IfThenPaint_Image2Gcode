@@ -23,13 +23,9 @@ if __name__ == '__main__':
 
     IMAGE_FILE_NAME = 'jackie_grayscale.png'
     
-    with open(os.path.join(DATA_PATH, 'machine_objects.txt'), 'r') as f:
-        machine_objects = json.load(f)
+    with open(os.path.join(DATA_PATH, 'image_properties.txt'), 'r') as f:
+        image_prop = json.load(f)
     f.close()
-    
-    machine_object_name_list = [x['name'] for x in machine_objects]
-    image_prop_index = machine_object_name_list.index('image_properties')
-    image_prop = machine_objects[image_prop_index]
     
     image = cv2.imread(os.path.join(DATA_PATH, IMAGE_FILE_NAME))
     

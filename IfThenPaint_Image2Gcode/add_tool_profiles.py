@@ -36,8 +36,24 @@ tool_profile_2 = {'name': '2_round_B0C0',
                   'z_palette_load_percent': 0.6,
                   'load_feed_rate': 1500}
 
+tool_profile_3 = {'name': '2_flat_B0C0',
+                  'tool_name': '2_flat',
+                  'profile_width': 2.25,
+                  'profile_length': 2.25,
+                  'b_angle': 0,
+                  'c_angle': 0,
+                  'c_axial_symmetry': 2,
+                  'z_canvas_unload_percent': 0.35,
+                  'unload_feed_rate': 2500,
+                  'paint_dist_max': 200,
+                  'clean_dist_max': 3000,
+                  'paint_dip_volume': 0.05,
+                  'z_palette_load_percent': 0.6,
+                  'load_feed_rate': 1500}
+
 tool_profiles = [tool_profile_1,
-                 tool_profile_2]
+                 tool_profile_2,
+                 tool_profile_3]
 
 with open(os.path.join(DATA_PATH, 'tool_profiles.txt'), 'w') as f:
     json.dump(tool_profiles, f, separators = (',', ':'), sort_keys = True, indent = 4)
