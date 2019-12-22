@@ -22,7 +22,7 @@ tool_2 = {'name': '2_round',
           'z_water_dip_percent': 0.60,
           'z_towel_wipe_percent': 0.60}
 
-tool_3 = {'name': 'flat',
+tool_3 = {'name': '2_flat',
           'length' : 57,
           'tip_length': 6.5,
           'x_dock': 178,

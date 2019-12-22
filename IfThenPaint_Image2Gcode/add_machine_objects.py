@@ -15,12 +15,12 @@ canvas = {'name': 'canvas',
 brush_palette = {'name': 'brush_palette',
                  'x_min': 9.5,
                  'x_max': 109.5,
-                 'y_min': 86.5,
-                 'y_max': 286.5,
+                 'y_min': 88,
+                 'y_max': 288,
                  'z_top': -138.75} # end of tool chuck at top of palette when b axis at 0
     
 brush_water = {'name': 'brush_water',
-               'x_center': 244,
+               'x_center': 242,
                'y_center': 39,
                'z_bottom': -131 - 66.6 + 8.6, # end of tool chuck at brush water bottom when b axis at 0
                'dip_radius': 17,
@@ -72,8 +72,7 @@ paint_dispenser = {'name': 'paint_dispenser',
                    'b_probe_retract': 2,
                    'b_probe_feedrate': 1200}
 
-machine_objects = [image_properties,
-                   canvas,
+machine_objects = [canvas,
                    brush_palette,
                    brush_water,
                    towel,

@@ -6,6 +6,7 @@ import datetime
 from definitions import DATA_PATH
 
 def write_brush_gcode(project_name,
+                      image_prop,
                       machine_objects,
                       paint_colors,
                       tools,
@@ -27,7 +28,6 @@ def write_brush_gcode(project_name,
     gcode_file.write('\n')
     
     machine_object_name_list = [x['name'] for x in machine_objects]
-    image_prop_index = machine_object_name_list.index('image_properties')
     canvas_index = machine_object_name_list.index('canvas')
     brush_palette_index = machine_object_name_list.index('brush_palette')
     brush_water_index = machine_object_name_list.index('brush_water')
@@ -35,7 +35,6 @@ def write_brush_gcode(project_name,
     tool_change_index = machine_object_name_list.index('tool_change')
     paint_palette_index = machine_object_name_list.index('paint_palette')
     
-    image_prop = machine_objects[image_prop_index]
     canvas = machine_objects[canvas_index]
     brush_palette = machine_objects[brush_palette_index]
     brush_water = machine_objects[brush_water_index]
@@ -263,6 +262,10 @@ def dock_tool(tool, tool_change, gcode_file):
     
 if __name__ == '__main__':
     
+    with open(os.path.join(DATA_PATH, 'image_properties.txt'), 'r') as f:
+        image_prop = json.load(f)
+    f.close()
+    
     with open(os.path.join(DATA_PATH, 'machine_objects.txt'), 'r') as f:
         machine_objects = json.load(f)
     f.close()
@@ -296,6 +299,7 @@ if __name__ == '__main__':
     f.close()
     
     write_brush_gcode('Jackie',
+                      image_prop,
                       machine_objects,
                       paint_colors,
                       tools,

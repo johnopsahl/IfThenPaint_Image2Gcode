@@ -242,10 +242,6 @@ def palette_paint_dip(palette_brush_map,
     # paint dip operation
     paint_color_rgb = paint_color['color_rgb']
     tool_profile_name = tool_profile['name']
-    profile_width = tool_profile['profile_width']
-    profile_length = tool_profile['profile_length']
-    
-    max_profile_dim = max(profile_width, profile_length)
     
     bead_row_index = 0
     for i in range(len(palette_brush_map)):
@@ -272,44 +268,30 @@ def palette_paint_dip(palette_brush_map,
                         + max_bead_height \
                         + tool['length']
     
-    # Z axis to palette retract height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
-    # go to bead length center
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position, y_start))
-    # dip brush into paint
-    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
-    # retract brush
-    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
+    for i in range(3):
+        gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position + bead_group_length/2, 
+                                                y_start))
+        
+        gcode_file.write('G00 Z%.4f\n' % z_palette_load)
     
-    # go to bead length max x location
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position + bead_group_length/2, 
-                                            y_start))
-    # dip brush into paint
-    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
-    # retract brush
-    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
-    
-    # go to bead length max x location
-    gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position - bead_group_length/2, 
-                                            y_start))
-    # dip brush into paint
-    gcode_file.write('G00 Z%.4f\n' % z_palette_load)
-    # retract brush
-    gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
-    
-#    # sweep brush in paint
-#    for i in range(8):
-#        # go to third paint mix location
-#        gcode_file.write('G01 X%.4f Y%.4f F%i\n' 
-#                         % (x_position - bead_group_length/2,
-#                            y_start,
-#                            tool_profile['load_feed_rate']))
-#        
-#        gcode_file.write('G01 X%.4f Y%.4f F%i\n' 
-#                         % (x_position + bead_group_length/2,
-#                            y_start,
-#                            tool_profile['load_feed_rate']))
+        gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_position, 
+                                                    y_start,
+                                                    tool_profile['load_feed_rate']))
+        
+        gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
+        
+        gcode_file.write('G00 X%.4f Y%.4f\n' % (x_position - bead_group_length/2, 
+                                                y_start))
+        
+        gcode_file.write('G00 Z%.4f\n' % z_palette_load)
+        
+        gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_position, 
+                                                    y_start,
+                                                    tool_profile['load_feed_rate']))
+        # retract brush
+        gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
     
     # Z axis to canvas retract height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
