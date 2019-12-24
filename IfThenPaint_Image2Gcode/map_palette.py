@@ -93,6 +93,7 @@ def map_palette(layer_paint_dips,
                                           'tool_profile_name': tool_profile_name,
                                           'bead_group_length': bead_group_length,
                                           'max_bead_height': max_bead_height,
+                                          'max_bead_diameter': max_bead_diameter,
                                           'y_increment': y_increment,
                                           'x_row': x_current - bead_group_length/2 - max_profile_dim/2,
                                           'y_start': y_start - y_increment, # advance by y_increment for first bead scrap
