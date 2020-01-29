@@ -18,12 +18,12 @@ from definitions import DATA_PATH
 # the parameters used by the line scan function to generate paint strokes from
 # a digital image by paint color
 scan_1 = {'name': 'process_2',
-          'scan_color_bgr': [159, 159, 159],
+          'scan_color_bgr': [40, 149, 67],
           'scan_angle_start': 0,
           'scan_angle_increment': 90,
           'scan_angle_end': 180,
-          'profile_width': 6,
-          'profile_length': 6,
+          'profile_width': 3,
+          'profile_length': 3,
           'color_match_threshold': 0.4,
           'scan_line_offset_overlap': 0.1,
           'scan_line_increment_overlap': 0.1,

@@ -21,7 +21,7 @@ def size_image(image, image_pixel_width, image_pixel_height):
 
 if __name__ == '__main__':
 
-    IMAGE_FILE_NAME = 'jackie_grayscale.png'
+    IMAGE_FILE_NAME = 'hello_world_sat_blur.png'
     
     with open(os.path.join(DATA_PATH, 'image_properties.txt'), 'r') as f:
         image_prop = json.load(f)

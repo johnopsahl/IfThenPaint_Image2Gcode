@@ -281,23 +281,23 @@ def palette_paint_dip(palette_brush_map,
             y_position = y_start - 0.25*max_bead_diameter
             
         for j in range(2):
-            gcode_file.write('G00 X%.4f Y%.4f\n' % (x_row + 0.75*bead_group_length, 
+            gcode_file.write('G00 X%.4f Y%.4f\n' % (x_row + 0.5*bead_group_length, 
                                                     y_position))
             
             gcode_file.write('G00 Z%.4f\n' % z_palette_load)
         
-            gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_row, 
+            gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_row - 0.25*bead_group_length, 
                                                         y_position,
                                                         tool_profile['load_feed_rate']))
             
             gcode_file.write('G00 Z%.4f\n' % z_palette_retract)
             
-            gcode_file.write('G00 X%.4f Y%.4f\n' % (x_row - 0.75*bead_group_length, 
+            gcode_file.write('G00 X%.4f Y%.4f\n' % (x_row - 0.5*bead_group_length, 
                                                     y_position))
             
             gcode_file.write('G00 Z%.4f\n' % z_palette_load)
             
-            gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_row, 
+            gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (x_row + 0.25*bead_group_length, 
                                                         y_position,
                                                         tool_profile['load_feed_rate']))
             # retract brush

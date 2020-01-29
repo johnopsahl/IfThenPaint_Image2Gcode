@@ -214,7 +214,7 @@ if __name__ == '__main__':
         stock_paints = json.load(f)
     f.close()
     
-    write_paint_gcode('Jackie',
+    write_paint_gcode('hello_world',
                       palette_paint_map,
                       machine_objects,
                       stock_paints)

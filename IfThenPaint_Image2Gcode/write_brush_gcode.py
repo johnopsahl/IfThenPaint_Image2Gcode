@@ -298,7 +298,7 @@ if __name__ == '__main__':
         palette_brush_map = json.load(f)
     f.close()
     
-    write_brush_gcode('Jackie',
+    write_brush_gcode('hello_world',
                       image_prop,
                       machine_objects,
                       paint_colors,

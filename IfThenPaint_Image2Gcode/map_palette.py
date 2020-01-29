@@ -99,7 +99,7 @@ def map_palette(layer_paint_dips,
                                           'y_start': y_start - y_increment, # advance by y_increment for first bead scrap
                                           'y_end': y_end})
                 
-                x_current -= max_profile_dim/2
+                x_current -= max_profile_dim
                 
                 # for each stock paint that is mixed together to create the paint color
                 for i in range(len(paint_color['paint_color_comp'])):
@@ -119,6 +119,7 @@ def map_palette(layer_paint_dips,
     
                     palette_paint_map.append({'paint_color_rgb': stock_paint_color,
                                               'tool_profile_name': tool_profile_name,
+                                              'paint_bead_volume': stock_paint_percent*paint_dip_volume,
                                               'paint_volume': paint_volume,
                                               'plunger_dist': plunger_dist,
                                               'bead_height': bead_height,
@@ -129,7 +130,7 @@ def map_palette(layer_paint_dips,
                     
                     x_current -= bead_diameter/2
                 
-                x_current -= max_profile_dim/2
+                x_current -= max_profile_dim
                 
                 # subtract one to account for first bead of each row as scrap
                 bead_count -= beads_per_row - 1

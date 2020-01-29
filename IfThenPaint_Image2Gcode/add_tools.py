@@ -9,18 +9,18 @@ tool_1 = {'name': '4_round',
           'tip_length': 14, # length of tool measured from tip (i.e. bristle length)
           'x_dock': 48,
           'y_dock': 328,
-          'z_workspace_clearance': -55,
-          'z_water_dip_percent': 0.60, # percent of tip_length to extend beyond water z_bottom
-          'z_towel_wipe_percent': 0.60} # percent of tip_length to extend beyond towel z_top
+          'z_workspace_clearance': -60,
+          'z_water_dip_percent': 0.3, # percent of tip_length to extend beyond water z_bottom
+          'z_towel_wipe_percent': 0.5} # percent of tip_length to extend beyond towel z_top
 
 tool_2 = {'name': '2_round',
           'length' : 62 + 3.2, # 3.2mm is chuck length add
           'tip_length': 16,
           'x_dock': 113,
           'y_dock': 328,
-          'z_workspace_clearance': -55,
-          'z_water_dip_percent': 0.60,
-          'z_towel_wipe_percent': 0.60}
+          'z_workspace_clearance': -60,
+          'z_water_dip_percent': 0.3,
+          'z_towel_wipe_percent': 0.5}
 
 tool_3 = {'name': '2_flat',
           'length' : 57,
@@ -31,7 +31,7 @@ tool_3 = {'name': '2_flat',
           'z_water_dip_percent': 0.3,
           'z_towel_wipe_percent': 0.5}
 
-tool_4 = {'name': 'none_2',
+tool_4 = {'name': 'none',
           'length' : 10,
           'tip_length': 4,
           'x_dock': 243,

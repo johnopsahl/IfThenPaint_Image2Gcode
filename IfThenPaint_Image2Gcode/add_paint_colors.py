@@ -36,22 +36,27 @@ paint_color_9 = {'color_rgb': [106, 106, 106],
 paint_color_10 = {'color_rgb': [60, 60, 60],
                  'paint_color_comp': [[[0, 0, 0], 0.77],
                                       [[255, 255, 255], 0.23]]}
+                 
+paint_color_11 = {'color_rgb': [0, 130, 0],
+                 'paint_color_comp': [[[0, 255, 0], 0.77],
+                                      [[0, 0, 0], 0.23]]}
 
-paint_color_11 = {'color_rgb': [34, 34, 34],
-                 'paint_color_comp': [[[0, 0, 0], 0.87],
-                                      [[255, 255, 255], 0.13]]}
+paint_color_12 = {'color_rgb': [108, 108, 255],
+                 'paint_color_comp': [[[0, 0, 255], 0.77],
+                                      [[255, 255, 255], 0.23]]}
 
 paint_colors = [paint_color_1, 
                 paint_color_2, 
                 paint_color_3, 
                 paint_color_4, 
                 paint_color_5,
-                paint_color_6, 
-                paint_color_7, 
+                paint_color_6,
+                paint_color_7,
                 paint_color_8,
-                paint_color_9, 
-                paint_color_10, 
-                paint_color_11]
+                paint_color_9,
+                paint_color_10,
+                paint_color_11,
+                paint_color_12]
 
 with open(os.path.join(DATA_PATH, 'paint_colors.txt'), 'w') as f:
     json.dump(paint_colors, f, separators = (',', ':'), sort_keys = True, indent = 4)
