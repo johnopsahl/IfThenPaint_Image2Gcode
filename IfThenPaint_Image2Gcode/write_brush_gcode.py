@@ -150,8 +150,8 @@ def write_brush_gcode(project_name,
             get_tool(tool, tool_change, gcode_file)
             tool_current = tool
         elif tool_current['name'] != tool['name']:
-            ln2gcd.water_dip(3, brush_water, tool_current, gcode_file)
-            towel = ln2gcd.towel_wipe(2, towel, tool_current, gcode_file)
+            ln2gcd.water_dip(4, brush_water, tool_current, gcode_file)
+            towel = ln2gcd.towel_wipe(3, towel, tool_current, gcode_file)
             dock_tool(tool_current, tool_change, gcode_file)
             get_tool(tool, tool_change, gcode_file)
             tool_current = tool
@@ -197,7 +197,7 @@ def write_brush_gcode(project_name,
 def go_to_home(gcode_file):
     # home X and Y, Z (in that order) then set work coordinates
 
-    gcode_file.write('$H\n') # grbl specific homing command
+    #gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
     gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' 
                      % (0, 0, 0, 0, 0, 0))
@@ -207,9 +207,9 @@ def get_tool(tool, tool_change, gcode_file):
     
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n'% tool['z_workspace_clearance'])
-    # orient A and C axes
-    gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'],
-                                            tool_change['c_start']))
+    # orient A axes
+    gcode_file.write('G00 A%.4f\n' % tool_change['a_start'])
+
     # to go tool dock
     gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # plunge into dock
@@ -221,12 +221,10 @@ def get_tool(tool, tool_change, gcode_file):
     gcode_file.write('G00 Z%.4f C%.4f\n' % (-tool_change['z_screw'],
                                             -tool_change['c_screw']))
     # continue to rotate C axis
-    gcode_file.write('G00 C%.4f\n' % -60)
+    gcode_file.write('G00 C%.4f\n' % -tool_change['c_over_rotate'])
     # change to absolute coordinates
     gcode_file.write('G90\n')
     
-    # soft set C axis to zero
-    gcode_file.write('G10 L20 P1 C%.4f\n' % 0)
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
@@ -235,9 +233,9 @@ def dock_tool(tool, tool_change, gcode_file):
     
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n'% tool['z_workspace_clearance'])
-    # orient A and C axes
-    gcode_file.write('G00 A%.4f C%.4f\n' % (tool_change['a_start'], 
-                                            tool_change['c_start']))
+    # orient A axis
+    gcode_file.write('G00 A%.4f\n' % tool_change['a_start'])
+    
     # go to tool dock
     gcode_file.write('G00 X%.4f Y%.4f\n' % (tool['x_dock'], tool['y_dock']))
     # plunge into dock
@@ -249,13 +247,9 @@ def dock_tool(tool, tool_change, gcode_file):
     gcode_file.write('G00 Z%.4f C%.4f\n' % (tool_change['z_screw'], 
                                             tool_change['c_screw']))
     # continue to rotate C axis
-    gcode_file.write('G00 C%.4f\n' % 60)
+    gcode_file.write('G00 C%.4f\n' % tool_change['c_over_rotate'])
     # change to absolute coordinates
     gcode_file.write('G90\n')
-    
-    # soft set C axis to zero, 
-    # so the C axis doesn't have to rotate to zero prior to picking up the next tool
-    gcode_file.write('G10 L20 P1 C%.4f\n' % 0)
     
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])

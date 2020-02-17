@@ -37,10 +37,10 @@ towel = {'name': 'towel',
 
 tool_change = {'name': 'tool_change',
                'z_dock': -181,
-               'a_start': 0,
-               'c_start': 0,
                'z_screw': 3.5,
-               'c_screw': 1333.5}
+               'a_start': 0,
+               'c_screw': 1333.5,
+               'c_over_rotate': 60}
 
 paint_management = {'name': 'paint_management',
                     'y_max_travel': 336,

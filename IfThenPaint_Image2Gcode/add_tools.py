@@ -14,7 +14,7 @@ tool_1 = {'name': '4_round',
           'z_towel_wipe_percent': 0.5} # percent of tip_length to extend beyond towel z_top
 
 tool_2 = {'name': '2_round',
-          'length' : 62 + 3.2, # 3.2mm is chuck length add
+          'length' : 62.5 + 3.2, # 3.2mm is chuck length add
           'tip_length': 16,
           'x_dock': 113,
           'y_dock': 328,

@@ -14,7 +14,7 @@ def stroke_lines_to_paint_gcode(line,
                                 gcode_file):
     # generate painterly gcode instructions from the list of lines to paint
       
-    a_start = 0
+    a_current = 0
     paint_dist = 0
     clean_dist = 0    
     
@@ -42,12 +42,9 @@ def stroke_lines_to_paint_gcode(line,
     for i in range(len(line)):
           
         draw_dist = line_length[i]
-    
+        
         x_current = x_start[i]
         y_current = y_start[i]
-        
-        x_next = x_end[i]
-        y_next = y_end[i]
         
         x_last = x_end[i]
         y_last = y_end[i]
@@ -60,9 +57,18 @@ def stroke_lines_to_paint_gcode(line,
         while draw_dist > 0:
 
             if clean_dist <= 0: # when paint brush drys out, wet and dry brush, dip in paint
-                water_dip(3, water, tool, gcode_file)
-                towel = towel_wipe(2, towel, tool, gcode_file)
+                water_dip(4, water, tool, gcode_file)
+                towel = towel_wipe(3, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
+                
+                # return a axis to paint dip angle location prior to paint dip
+                if tool_profile['a_axial_symmetry'] != 2:
+                    a_next = calc_fourth_axis_angle(tool_profile['a_angle_paint_dip'],
+                                                    a_current,
+                                                    tool_profile['a_axial_symmetry'])
+                    gcode_file.write('G00 A%.4f\n' % a_next)
+                    a_current = a_next
+                    
                 palette_brush_map = palette_paint_dip(palette_brush_map,
                                                       paint_color, 
                                                       tool_profile,
@@ -72,6 +78,15 @@ def stroke_lines_to_paint_gcode(line,
                 paint_dist = tool_profile['paint_dist_max']
                 
             if paint_dist == 0:  # when paint brush runs out of paint, dip in paint
+                
+                # return a axis to paint dip angle location prior to paint dip
+                if tool_profile['a_axial_symmetry'] != 2:
+                    a_next = calc_fourth_axis_angle(tool_profile['a_angle_paint_dip'],
+                                                    a_current,
+                                                    tool_profile['a_axial_symmetry'])
+                    gcode_file.write('G00 A%.4f\n' % a_next)
+                    a_current = a_next
+                    
                 palette_brush_map = palette_paint_dip(palette_brush_map,
                                                       paint_color,
                                                       tool_profile,
@@ -81,26 +96,12 @@ def stroke_lines_to_paint_gcode(line,
                 paint_dist = tool_profile['paint_dist_max']
                 
             # if it is the first move of the stroke line and the tool doesn't have infinite c axial symmetry
-            if paint_move_count == 0 and tool_profile['c_axial_symmetry'] != 2:
-                a_last = calc_fourth_axis_angle(line_angle[i], a_start,
-                                                tool_profile['c_axial_symmetry'])
-                a_start = a_last
-                gcode_file.write('G00 A%.4f C%.4f\n' 
-                                 % (a_last, tool_profile['c_angle']))
-    
-#              ****************************************************
-#              define custom a axis movements here
-#             if paint_move_count == 0:
-#                 if a_end == 0:
-#                     a_end = 60
-#                 elif a_end == 60:
-#                     a_end = 120
-#                 elif a_end == 120:
-#                     a_end = 60
-#            
-#                 paint_gcode_file.write('G0 A%.15f\n' % a_end)
-#              ***************************************************
-    
+            if paint_move_count == 0 and tool_profile['a_axial_symmetry'] != 2:
+                a_next = calc_fourth_axis_angle(math.degrees(line_angle[i]), a_current,
+                                                tool_profile['a_axial_symmetry'])
+                gcode_file.write('G00 A%.4f\n' % a_next)
+                a_current = a_next
+        
             if paint_dist >= draw_dist:
                 # paint the entire draw distance
                 clean_dist -= draw_dist
@@ -148,6 +149,18 @@ def stroke_lines_to_paint_gcode(line,
                 y_current = y_next
     
             paint_move_count += 1
+    
+        # move a axis to equivalent zero position
+        # prep for next tool profile or tool change
+        if tool_profile['a_axial_symmetry'] != 2:
+            a_next = calc_fourth_axis_angle(0,
+                                            a_current,
+                                            tool_profile['a_axial_symmetry'])
+            gcode_file.write('G00 A%.4f\n' % a_next)
+            a_current = a_next
+            
+            # soft set A axis to zero
+            gcode_file.write('G10 L20 P1 A%.4f\n' % 0)
         
     return palette_brush_map, towel
     
@@ -314,27 +327,26 @@ def palette_paint_dip(palette_brush_map,
 
     return palette_brush_map
     
-def calc_fourth_axis_angle(path_angle, angle_current, tool_axial_symmetry):
+def calc_fourth_axis_angle(angle_next, angle_current, tool_axial_symmetry):
     # calculate absolute brush angle to be perpendicular to G01 movement
+    # angle function input parameters in units of degrees
     
     # tool_axis_symmetry rules
     # 0 -> no axial symmetry, 1 -> 180 deg axial symmetry, 2 -> infinite axial symmetry
-    
-    # angle between vector and horizontal
-    norm_angle_end = math.degrees(path_angle)
 
-    # normalize the start angle to a value between 0 and 360 degrees
+    # normalize to a value between 0 and 360 degrees
+    norm_angle_next = angle_next % 360
     norm_angle_current = angle_current % 360
 
     # no symmetry angle change
-    angle_change = calc_angle_change(norm_angle_current, norm_angle_end)
+    angle_change = calc_angle_change(norm_angle_current, norm_angle_next)
 
     # if tool has 180 degree axial symmetry
     if tool_axial_symmetry == 1:
 
         # calculate angle change if tool has 180 deg axial symmetry
         angle_change_180 = calc_angle_change((norm_angle_current + 180) % 360, 
-                                             norm_angle_end)
+                                             norm_angle_next)
 
         # if 180 deg angle change is less, then use it
         if abs(angle_change_180) < abs(angle_change):
@@ -343,7 +355,7 @@ def calc_fourth_axis_angle(path_angle, angle_current, tool_axial_symmetry):
     # add angle change to current angle for angle change
     angle_next = angle_current + angle_change
 
-    # round to nearest degree; floating point errors occur otherwise
+    # round to nearest degree; floating point errors accumulate otherwise
     angle_next = round(angle_next)
 
     return angle_next

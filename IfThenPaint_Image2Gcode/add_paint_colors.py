@@ -38,12 +38,12 @@ paint_color_10 = {'color_rgb': [60, 60, 60],
                                       [[255, 255, 255], 0.23]]}
                  
 paint_color_11 = {'color_rgb': [0, 130, 0],
-                 'paint_color_comp': [[[0, 255, 0], 0.77],
-                                      [[0, 0, 0], 0.23]]}
+                 'paint_color_comp': [[[0, 255, 0], 0.6],
+                                      [[0, 0, 0], 0.4]]}
 
 paint_color_12 = {'color_rgb': [108, 108, 255],
-                 'paint_color_comp': [[[0, 0, 255], 0.77],
-                                      [[255, 255, 255], 0.23]]}
+                 'paint_color_comp': [[[0, 0, 255], 0.6],
+                                      [[255, 255, 255], 0.4]]}
 
 paint_colors = [paint_color_1, 
                 paint_color_2, 
