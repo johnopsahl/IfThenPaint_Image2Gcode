@@ -137,6 +137,10 @@ def dispense_paint(paint_row,
     # change to relative coordinates
     gcode_file.write('G91\n')
     
+    # initial b travel to make up for distance between top of paint syringe
+    # plunger and bottom of push plate when b probe switch has been activated
+    gcode_file.write('G01 B%.4f\n' % paint_management['b_switch_initial'])
+    
     while y_current >= y_end:
         
         # dispense paint

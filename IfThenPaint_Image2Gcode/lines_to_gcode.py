@@ -57,17 +57,17 @@ def stroke_lines_to_paint_gcode(line,
         while draw_dist > 0:
 
             if clean_dist <= 0: # when paint brush drys out, wet and dry brush, dip in paint
-                water_dip(4, water, tool, gcode_file)
-                towel = towel_wipe(3, towel, tool, gcode_file)
-                clean_dist = tool_profile['clean_dist_max']
                 
-                # return a axis to paint dip angle location prior to paint dip
+                # move a axis to nearest equivalent zero location prior 
+                # to cleaning, towel wiping, and paint dipping operations
                 if tool_profile['a_axial_symmetry'] != 2:
-                    a_next = calc_fourth_axis_angle(tool_profile['a_angle_paint_dip'],
-                                                    a_current,
-                                                    tool_profile['a_axial_symmetry'])
+                    a_next = calc_fourth_axis_angle(0, a_current, 0)
                     gcode_file.write('G00 A%.4f\n' % a_next)
                     a_current = a_next
+            
+                water_dip(4, water, tool, gcode_file)
+                towel = towel_wipe(4, towel, tool_profile, tool, gcode_file)
+                clean_dist = tool_profile['clean_dist_max']
                     
                 palette_brush_map = palette_paint_dip(palette_brush_map,
                                                       paint_color, 
@@ -79,11 +79,10 @@ def stroke_lines_to_paint_gcode(line,
                 
             if paint_dist == 0:  # when paint brush runs out of paint, dip in paint
                 
-                # return a axis to paint dip angle location prior to paint dip
+                # move a axis nearest equivalent zero location prior to 
+                # paint dipping operation
                 if tool_profile['a_axial_symmetry'] != 2:
-                    a_next = calc_fourth_axis_angle(tool_profile['a_angle_paint_dip'],
-                                                    a_current,
-                                                    tool_profile['a_axial_symmetry'])
+                    a_next = calc_fourth_axis_angle(0, a_current, 0)
                     gcode_file.write('G00 A%.4f\n' % a_next)
                     a_current = a_next
                     
@@ -93,11 +92,15 @@ def stroke_lines_to_paint_gcode(line,
                                                       brush_palette,
                                                       tool,
                                                       gcode_file)
+                
                 paint_dist = tool_profile['paint_dist_max']
                 
-            # if it is the first move of the stroke line and the tool doesn't have infinite c axial symmetry
-            if paint_move_count == 0 and tool_profile['a_axial_symmetry'] != 2:
-                a_next = calc_fourth_axis_angle(math.degrees(line_angle[i]), a_current,
+            # if it is the first move of the stroke line or the brush was just
+            # loaded with paint and the tool doesn't have infinite c axial symmetry
+            if (paint_move_count == 0 or paint_dist == tool_profile['paint_dist_max']) \
+                and tool_profile['a_axial_symmetry'] != 2:
+                a_next = calc_fourth_axis_angle(math.degrees(line_angle[i]), 
+                                                a_current,
                                                 tool_profile['a_axial_symmetry'])
                 gcode_file.write('G00 A%.4f\n' % a_next)
                 a_current = a_next
@@ -204,7 +207,6 @@ def water_dip(number_of_swirls, water, tool, gcode_file):
                             0,
                             water['feed_rate']))
         
-        
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
 
@@ -215,30 +217,61 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
                    + tool['length'] \
                    - tool['tip_length']*tool['z_towel_wipe_percent']
     
+    max_profile_dim = max(tool['profile_width'], tool['profile_length'])
+    x_increment = 1.5*max_profile_dim
+    
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
-           
+    
+    # go to first towel location
+    gcode_file.write('G00 X%.4f Y%.4f\n' % (towel['x_current'], 
+                                            towel['y_center'] + towel['y_height']/2))
+    
+    gcode_file.write('G91\n')
+    # rotate A axis by 90 degrees CCW so tool profile oriented correctly
+    gcode_file.write('G00 A%.4f\n' % 90)
+    gcode_file.write('G90\n')
+    
+    # lower tool to towel
+    gcode_file.write('G00 Z%.4f\n' % z_towel_wipe)
+    
     # wipe brush on towel in a ccw motion
     for j in range(number_of_wipes):
         
-        # go to towel
-        gcode_file.write('G00 X%.4f Y%.4f\n' % (towel['x_current'], 
-                                                towel['y_center']))
-        # lower tool to towel
-        gcode_file.write('G00 Z%.4f\n' % z_towel_wipe)
+        # wipe on towel along y axis, negative direction
+        gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (towel['x_current'], 
+                                                    towel['y_center'] - towel['y_height']/2,
+                                                    towel['feed_rate']))
         
-        gcode_file.write('G03 X%.4f Y%.4f I%.4f J%.4f F%i\n'
-                         % (towel['x_current'], 
-                            towel['y_center'], 
-                            -towel['wipe_radius'], 
-                            0, 
-                            towel['feed_rate']))
-
-        # increment towel x position so a different part of the towel is used next
-        towel['x_current'] -= towel['x_increment']
+        # increment tool over on towel along x axis, negative direction
+        gcode_file.write('G01 X%.4f F%i\n' % (towel['x_current'] - x_increment,
+                                              towel['feed_rate']))
+        
+        towel['x_current'] -= x_increment
+        
+        # wipe on towel along y axis, negative direction
+        gcode_file.write('G01 X%.4f Y%.4f F%i\n' % (towel['x_current'], 
+                                                    towel['y_center'] + towel['y_height']/2,
+                                                    towel['feed_rate']))
+        
+        # On last wipe, don't incrment tool over on towel along x axis, 
+        # negative direction. This leaves unused towel for next towel wipe oepration.
+        if j != number_of_wipes - 1:
+            # increment tool over on towel along x axis, negative direction
+            gcode_file.write('G01 X%.4f F%i\n' % (towel['x_current'] - x_increment,
+                                                  towel['feed_rate']))
+        
+        # advance x_current by x_increment so either same or next brush will
+        # start next wiping operation at the correct location
+        towel['x_current'] -= x_increment
 
     # Z axis to B0C0 clearance height
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
+    
+    gcode_file.write('G91\n')
+    # rotate A axis by 90 degrees CW to return tool profile to original orientation
+    gcode_file.write('G00 A%.4f\n' % -90)
+    gcode_file.write('G90\n')
     
     return towel
 

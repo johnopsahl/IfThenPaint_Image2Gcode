@@ -8,15 +8,14 @@ from definitions import DATA_PATH
 
 tool_profile_1 = {'name': '4_round_B0C0',
                   'tool_name': '4_round',
-                  'profile_width': 3,
-                  'profile_length': 3,
+                  'profile_width': 3, # tool profile along x axis when A0
+                  'profile_length': 3, # tool profile along y axis when A0
                   'a_axial_symmetry': 2,  # 0 -> no axial symmetry, 1 -> 180 deg axial symmetry, 2 -> infinite axial symmetry
-                  'a_angle_paint_dip': 0, # degrees, only used if a_axial_symmetry != 2
                   'z_canvas_unload_percent': 0.3,
                   'unload_feed_rate': 2500,
                   'paint_dist_max': 200,
                   'clean_dist_max': 3000,
-                  'paint_dip_volume': 0.08,
+                  'paint_dip_volume': 0.05,
                   'z_palette_load_percent': 0.4, # percent of tip_length to extend beyond palette paint bead
                   'load_feed_rate': 1500} # feed rate of tool loading operation}
 
@@ -25,12 +24,11 @@ tool_profile_2 = {'name': '2_round_B0C0',
                   'profile_width': 2.25,
                   'profile_length': 2.25,
                   'a_axial_symmetry': 2,
-                  'a_angle_paint_dip': 0,
-                  'z_canvas_unload_percent': 0.35,
+                  'z_canvas_unload_percent': 0.50,
                   'unload_feed_rate': 2500,
                   'paint_dist_max': 100,
                   'clean_dist_max': 800,
-                  'paint_dip_volume': 0.08,
+                  'paint_dip_volume': 0.05,
                   'z_palette_load_percent': 0.6,
                   'load_feed_rate': 1500}
 
@@ -39,12 +37,11 @@ tool_profile_3 = {'name': '2_flat_B0C0',
                   'profile_width': 2.25,
                   'profile_length': 2.25,
                   'a_axial_symmetry': 1,
-                  'a_angle_paint_dip': 0,
                   'z_canvas_unload_percent': 0.35,
                   'unload_feed_rate': 2500,
                   'paint_dist_max': 100,
                   'clean_dist_max': 800,
-                  'paint_dip_volume': 0.08,
+                  'paint_dip_volume': 0.05,
                   'z_palette_load_percent': 0.6,
                   'load_feed_rate': 1500}
 

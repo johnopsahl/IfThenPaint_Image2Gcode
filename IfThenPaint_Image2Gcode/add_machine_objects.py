@@ -28,11 +28,10 @@ brush_water = {'name': 'brush_water',
 
 towel = {'name': 'towel',
          'x_current': 185, # initialize as x start
-         'x_increment': 7.5,
          'x_end': 35,
          'y_center': 25,
+         'y_height': 30,
          'z_top': -129.5, # end of tool chuck at top of towel when b axis is 0
-         'wipe_radius': 15,
          'feed_rate': 2500}
 
 tool_change = {'name': 'tool_change',
@@ -45,6 +44,7 @@ tool_change = {'name': 'tool_change',
 paint_management = {'name': 'paint_management',
                     'y_max_travel': 336,
                     'b_max_travel': 90,
+                    'b_switch_initial': 0.5, # distance between paint syringe plunger and bottom of push plate when b probe switch has been activated
                     'x_workspace': 8} #x distance to position palette within workspace
 
 paint_palette = {'name': 'paint_palette',

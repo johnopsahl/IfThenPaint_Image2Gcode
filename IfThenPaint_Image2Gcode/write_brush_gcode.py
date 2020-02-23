@@ -197,7 +197,7 @@ def write_brush_gcode(project_name,
 def go_to_home(gcode_file):
     # home X and Y, Z (in that order) then set work coordinates
 
-    #gcode_file.write('$H\n') # grbl specific homing command
+    gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
     gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f C%.4f\n' 
                      % (0, 0, 0, 0, 0, 0))
@@ -207,7 +207,7 @@ def get_tool(tool, tool_change, gcode_file):
     
     # raise Z to clearnce height
     gcode_file.write('G00 Z%.4f\n'% tool['z_workspace_clearance'])
-    # orient A axes
+    # orient A axis
     gcode_file.write('G00 A%.4f\n' % tool_change['a_start'])
 
     # to go tool dock

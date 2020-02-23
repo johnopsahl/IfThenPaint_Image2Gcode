@@ -6,7 +6,8 @@ from definitions import DATA_PATH
 def map_palette(layer_paint_dips,
                 paint_colors,
                 machine_objects, 
-                tool_profiles):
+                tool_profiles,
+                tools):
     # generate a map of where to dispense and what paint to dispense
     # on the palette
     
@@ -40,12 +41,17 @@ def map_palette(layer_paint_dips,
         tool_profile_name_list = [x['name'] for x in tool_profiles]
         tool_profile_index = tool_profile_name_list.index(tool_profile_name)
         tool_profile = tool_profiles[tool_profile_index]
-        profile_width = tool_profile['profile_width']
-        profile_length = tool_profile['profile_length']
+        
+        tool_name_list = [x['name'] for x in tools]
+        tool_name = tool_profile['tool_name']
+        tool_index = tool_name_list.index(tool_name)
+        tool = tools[tool_index]
+        
         paint_dip_volume = tool_profile['paint_dip_volume']
         
-        # determine max profile dimension
-        max_profile_dim = max(profile_width, profile_length)
+        # calculate gap between paint rows
+        max_profile_dim = max(tool['profile_width'], tool['profile_length'])
+        x_increment = 1.5*max_profile_dim
         
         # determine largest volume percentage of any one stock paint 
         # of the paint color composition
@@ -60,7 +66,8 @@ def map_palette(layer_paint_dips,
         for paint_percent in paint_percent_list:
             bead_height, bead_diameter = paint_bead_dimensions(paint_percent*paint_dip_volume)
             bead_group_length += bead_diameter
-            
+        
+        # increment between columns of each paint row
         y_increment = bead_group_length + max_profile_dim
         
         # calculate number of paint beads per y row
@@ -95,11 +102,12 @@ def map_palette(layer_paint_dips,
                                           'max_bead_height': max_bead_height,
                                           'max_bead_diameter': max_bead_diameter,
                                           'y_increment': y_increment,
-                                          'x_row': x_current - bead_group_length/2 - max_profile_dim/2,
+                                          'x_row': x_current - x_increment - bead_group_length/2,
                                           'y_start': y_start - y_increment, # advance by y_increment for first bead scrap
                                           'y_end': y_end})
                 
-                x_current -= max_profile_dim
+                # first increment between paint color rows
+                x_current -= x_increment
                 
                 # for each stock paint that is mixed together to create the paint color
                 for i in range(len(paint_color['paint_color_comp'])):
@@ -115,6 +123,7 @@ def map_palette(layer_paint_dips,
                     
                     bead_height, bead_diameter = paint_bead_dimensions(stock_paint_percent*paint_dip_volume)
                     
+                    # increment to paint bead center
                     x_current -= bead_diameter/2
     
                     palette_paint_map.append({'paint_color_rgb': stock_paint_color,
@@ -128,9 +137,11 @@ def map_palette(layer_paint_dips,
                                               'y_start': y_start,
                                               'y_end': y_end})
                     
+                    # increment to end of paint bead
                     x_current -= bead_diameter/2
                 
-                x_current -= max_profile_dim
+                # first increment between paint color rows
+                x_current -= x_increment
                 
                 # subtract one to account for first bead of each row as scrap
                 bead_count -= beads_per_row - 1
@@ -167,10 +178,15 @@ if __name__ == '__main__':
         tool_profiles = json.load(f)
     f.close()
     
+    with open(os.path.join(DATA_PATH, 'tools.txt'), 'r') as f:
+        tools = json.load(f)
+    f.close()
+    
     palette_brush_map, palette_paint_map = map_palette(layer_paint_dips,
                                                        paint_colors,
                                                        machine_objects,
-                                                       tool_profiles)
+                                                       tool_profiles,
+                                                       tools)
     
 #    with open(os.path.join(DATA_PATH, 'dispense_paint_volume.txt'), 'w') as f:
 #        json.dump(dispense_paint_volume, f, separators = (',', ':'), sort_keys = True, indent = 4)
