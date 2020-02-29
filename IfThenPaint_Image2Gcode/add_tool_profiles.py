@@ -14,7 +14,7 @@ tool_profile_1 = {'name': '4_round_B0C0',
                   'z_canvas_unload_percent': 0.3,
                   'unload_feed_rate': 2500,
                   'paint_dist_max': 200,
-                  'clean_dist_max': 3000,
+                  'clean_dist_max': 200*15, # must be a multiple of paint_dist_max or update map_palette to account for extra paint dip
                   'paint_dip_volume': 0.05,
                   'z_palette_load_percent': 0.4, # percent of tip_length to extend beyond palette paint bead
                   'load_feed_rate': 1500} # feed rate of tool loading operation}
@@ -27,7 +27,7 @@ tool_profile_2 = {'name': '2_round_B0C0',
                   'z_canvas_unload_percent': 0.50,
                   'unload_feed_rate': 2500,
                   'paint_dist_max': 100,
-                  'clean_dist_max': 800,
+                  'clean_dist_max': 100*8,
                   'paint_dip_volume': 0.05,
                   'z_palette_load_percent': 0.6,
                   'load_feed_rate': 1500}
@@ -40,7 +40,7 @@ tool_profile_3 = {'name': '2_flat_B0C0',
                   'z_canvas_unload_percent': 0.35,
                   'unload_feed_rate': 2500,
                   'paint_dist_max': 100,
-                  'clean_dist_max': 800,
+                  'clean_dist_max': 100*8,
                   'paint_dip_volume': 0.05,
                   'z_palette_load_percent': 0.6,
                   'load_feed_rate': 1500}

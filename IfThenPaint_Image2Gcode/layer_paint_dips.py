@@ -27,6 +27,7 @@ def layer_paint_dips(layers,
         paint_color_rgb = layer['paint_color_rgb']
 
         distance_on_canvas = canvas_paint_distance(process_lines[process_index])
+        # consider accounting for clean_dist_max if clean_dist_max is not a multiple of paint_dist_max
         paint_dips = np.ceil(distance_on_canvas/paint_dist_max)
         
         layer_paint_dips.append({'paint_color_rgb': paint_color_rgb,

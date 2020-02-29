@@ -186,7 +186,7 @@ def write_brush_gcode(project_name,
     
     # clean tool prior to docking
     ln2gcd.water_dip(3, brush_water, tool, gcode_file)
-    towel = ln2gcd.towel_wipe(2, towel, tool, gcode_file)
+    towel = ln2gcd.towel_wipe(3, towel, tool, gcode_file)
     
     # dock tool once painting is complete
     dock_tool(tool_current, tool_change, gcode_file)

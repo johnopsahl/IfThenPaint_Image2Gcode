@@ -81,10 +81,10 @@ def map_palette(layer_paint_dips,
         # interate until all paint beads have been dispensed
         while bead_count > 0:
             
-            # this check is not ideal, occurs after x_current is already 
+            # if not enough x palette space to fit all paints, stop the process
+            # and wrtie message to the console, occurs after x_current is already 
             # less than palette_x_end and invalid dispense row has been 
-            # written to the paint_palette_map, but is a sufficient 
-            # way to stop the process and inform the user
+            # written to the paint_palette_map
             if x_current > palette_x_end:
                 
                 if bead_count >= max_beads_per_row:

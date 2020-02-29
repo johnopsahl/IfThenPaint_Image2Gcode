@@ -20,7 +20,7 @@ brush_palette = {'name': 'brush_palette',
                  'z_top': -138.75} # end of tool chuck at top of palette when b axis at 0
     
 brush_water = {'name': 'brush_water',
-               'x_center': 242,
+               'x_center': 245,
                'y_center': 39,
                'z_bottom': -131 - 66.6 + 8.6, # end of tool chuck at brush water bottom when b axis at 0
                'dip_radius': 17,
@@ -30,7 +30,7 @@ towel = {'name': 'towel',
          'x_current': 185, # initialize as x start
          'x_end': 35,
          'y_center': 25,
-         'y_height': 30,
+         'y_height': 55,
          'z_top': -129.5, # end of tool chuck at top of towel when b axis is 0
          'feed_rate': 2500}
 

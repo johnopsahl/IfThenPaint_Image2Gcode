@@ -53,6 +53,10 @@ def stroke_lines_to_paint_gcode(line,
         # multiple moves are needed if brush runs out of paint, brush needs to be cleaned, etc
         paint_move_count = 0
         
+        # draw_dist is the total line distance, paint_dist is the length of
+        # line distance that can be painted with the quantity of paint currently
+        # on the brush 
+        
         # loop until line of gcode is complete
         while draw_dist > 0:
 
@@ -66,7 +70,7 @@ def stroke_lines_to_paint_gcode(line,
                     a_current = a_next
             
                 water_dip(4, water, tool, gcode_file)
-                towel = towel_wipe(4, towel, tool_profile, tool, gcode_file)
+                towel = towel_wipe(3, towel, tool, gcode_file)
                 clean_dist = tool_profile['clean_dist_max']
                     
                 palette_brush_map = palette_paint_dip(palette_brush_map,
@@ -153,17 +157,17 @@ def stroke_lines_to_paint_gcode(line,
     
             paint_move_count += 1
     
-        # move a axis to equivalent zero position
-        # prep for next tool profile or tool change
-        if tool_profile['a_axial_symmetry'] != 2:
-            a_next = calc_fourth_axis_angle(0,
-                                            a_current,
-                                            tool_profile['a_axial_symmetry'])
-            gcode_file.write('G00 A%.4f\n' % a_next)
-            a_current = a_next
-            
-            # soft set A axis to zero
-            gcode_file.write('G10 L20 P1 A%.4f\n' % 0)
+    # move a axis to equivalent zero position
+    # prep for next tool profile or tool change
+    if tool_profile['a_axial_symmetry'] != 2:
+        a_next = calc_fourth_axis_angle(0,
+                                        a_current,
+                                        tool_profile['a_axial_symmetry'])
+        gcode_file.write('G00 A%.4f\n' % a_next)
+        a_current = a_next
+        
+        # soft set A axis to zero
+        gcode_file.write('G10 L20 P1 A%.4f\n' % 0)
         
     return palette_brush_map, towel
     
@@ -226,6 +230,9 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
     # go to first towel location
     gcode_file.write('G00 X%.4f Y%.4f\n' % (towel['x_current'], 
                                             towel['y_center'] + towel['y_height']/2))
+    
+    # increase x gap between towel wipe sets
+    gcode_file.write('G00 X%.4f\n' % (towel['x_current'] - x_increment))
     
     gcode_file.write('G91\n')
     # rotate A axis by 90 degrees CCW so tool profile oriented correctly
@@ -317,6 +324,8 @@ def palette_paint_dip(palette_brush_map,
     
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
+    print(y_start)
+    
     for i in range(4):
         
         if i == 0 or i == 3:
@@ -353,7 +362,7 @@ def palette_paint_dip(palette_brush_map,
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
 
     # check if enough paint bead length for next paint dip, delete from map if not
-    if abs(y_end - y_start) - y_increment >= 0:
+    if abs(y_end - y_start) - y_increment >= 0.00001: #0.00001 to correct for floating point error
         bead_row['y_start'] -= y_increment
     else:
         del palette_brush_map[bead_row_index]
