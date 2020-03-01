@@ -324,8 +324,6 @@ def palette_paint_dip(palette_brush_map,
     
     gcode_file.write('G00 Z%.4f\n' % tool['z_workspace_clearance'])
     
-    print(y_start)
-    
     for i in range(4):
         
         if i == 0 or i == 3:
