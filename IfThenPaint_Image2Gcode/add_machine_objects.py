@@ -29,7 +29,7 @@ brush_water = {'name': 'brush_water',
 towel = {'name': 'towel',
          'x_current': 185, # initialize as x start
          'x_end': 35,
-         'y_center': 20,
+         'y_center': 25,
          'y_height': 55,
          'z_top': -129.5, # end of tool chuck at top of towel when b axis is 0
          'feed_rate': 2500}

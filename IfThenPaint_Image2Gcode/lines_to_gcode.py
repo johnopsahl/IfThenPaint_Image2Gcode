@@ -233,6 +233,7 @@ def towel_wipe(number_of_wipes, towel, tool, gcode_file):
     
     # increase x gap between towel wipe sets
     gcode_file.write('G00 X%.4f\n' % (towel['x_current'] - x_increment))
+    towel['x_current'] -= x_increment
     
     gcode_file.write('G91\n')
     # rotate A axis by 90 degrees CCW so tool profile oriented correctly
