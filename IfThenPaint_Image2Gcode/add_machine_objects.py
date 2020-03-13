@@ -67,7 +67,7 @@ paint_dispenser = {'name': 'paint_dispenser',
                    'b_clearance': 22, # so b-axis push plate clears syringe plungers
                    'syringe_volume': 8, #syringe volume capacity
                    'dispense_mm_per_ml': 5.8, # mm of syringe movement to dispense one ml
-                   'dispense_delay': 2,
+                   'dispense_delay': 2, # seconds, delay between bead dispenses
                    'dispense_feedrate': 50,
                    'b_probe_retract': 2,
                    'b_probe_feedrate': 1200}
