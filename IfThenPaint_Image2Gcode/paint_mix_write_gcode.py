@@ -142,7 +142,13 @@ def dispense_paint(paint_row,
         plunger_dist = paint_bead_volume*dispenser['dispense_mm_per_ml']
         bead_height, bead_diameter = paint_bead_dimensions(paint_bead_volume)
         
+        # change to absolute coordinates
+        gcode_file.write('G90\n')
+        
         gcode_file.write('G00 Z%.4f\n' % (bead_height + palette['z_top']))
+        
+        # change to relative coordinates
+        gcode_file.write('G91\n')
         
         # dispense paint
         gcode_file.write('G01 B%.4f F%.4f\n' % (plunger_dist, 
@@ -162,7 +168,7 @@ def dispense_paint(paint_row,
     # raise push plate limit off of syringe plunger so it is no longer activated
     gcode_file.write('G00 B%.4f\n' % -dispenser['b_probe_retract'])
     
-    # change back to absolute coordinates
+    # change to absolute coordinates
     gcode_file.write('G90\n')
     
     # raise to palette clearance height
@@ -193,6 +199,7 @@ def go_to_home(paint_management, gcode_file):
     
     # short pause so the machine can go into idle state
     gcode_file.write('G04 P%.4f\n' % 0.5) 
+    
     gcode_file.write('$H\n') # grbl specific homing command
     # set work coordinates
     gcode_file.write('G10 L20 P1 X%.4f Y%.4f Z%.4f A%.4f B%.4f\n' 
